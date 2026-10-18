@@ -18,7 +18,10 @@ const TITLES = {
 };
 // Brand components live on the brand site; the Cover is a slide, not a component.
 const BRAND_ONLY = new Set(['Logo', 'SectionTag']);
-const OPEN_FONT_FAMILIES = ['Poppins', 'Almarai']; // SIL OFL, safe to offer; Hero and Blue Ocean are licensed to Cave
+const OPEN_FONT_FAMILIES = ['Poppins', 'Almarai']; // SIL OFL, safe to offer
+// Hero is not in this repository (its licence is not open: all rights reserved). If source/fonts/Hero*.otf is present locally
+// it is served so this site can set its own headings; if not, the headings fall back to Poppins.
+const OPTIONAL_FONT_FAMILIES = ['Hero'];
 const GROUP_ORDER = ['Actions', 'Forms', 'Data', 'Feedback', 'Overlays', 'Navigation', 'Brand'];
 
 const read = (...p) => readFile(path.join(SRC, ...p), 'utf8');
@@ -82,8 +85,11 @@ export async function build() {
 
   // Generated assets
   const tokensCss = buildTokensCss(tokens);
-  const fontsCss = buildFontsCss(tokens, { families: OPEN_FONT_FAMILIES });
-  const fontsCave = buildFontsCss(tokens, { families: [...OPEN_FONT_FAMILIES, 'Hero'] });
+  const present = [];
+  for (const f of tokens.type.fonts) if (await exists(path.join(SRC, f.file))) present.push(f);
+  const presentTokens = { ...tokens, type: { ...tokens.type, fonts: present } };
+  const fontsCss = buildFontsCss(presentTokens, { families: OPEN_FONT_FAMILIES });
+  const fontsCave = buildFontsCss(presentTokens, { families: [...OPEN_FONT_FAMILIES, ...OPTIONAL_FONT_FAMILIES] });
   const dart = buildDart(tokens);
   const componentsCss = await read('components', 'bundle.css');
   await writeOut('assets/tokens.css', tokensCss);
@@ -95,7 +101,7 @@ export async function build() {
   await cp(path.join(ROOT, 'site', 'site.css'), path.join(OUT, 'assets', 'site.css'));
   await cp(path.join(ROOT, 'site', 'site.js'), path.join(OUT, 'assets', 'site.js'));
   // Fonts: the open ones are offered for download; Hero is served only so this site can set its own headings.
-  const servedFonts = tokens.type.fonts.filter((f) => [...OPEN_FONT_FAMILIES, 'Hero'].includes(f.family));
+  const servedFonts = present.filter((f) => [...OPEN_FONT_FAMILIES, ...OPTIONAL_FONT_FAMILIES].includes(f.family));
   for (const f of servedFonts) await cp(path.join(SRC, f.file), path.join(OUT, 'assets', f.file));
   for (const f of ['cave-symbol-color.svg', 'cave-symbol-white.svg']) await cp(path.join(SRC, 'logos', f), path.join(OUT, 'assets', 'logos', f));
 
@@ -108,7 +114,7 @@ export async function build() {
 
   const sizeOf = async (rel) => (await stat(path.join(OUT, rel))).size;
   const fontFiles = [];
-  for (const f of tokens.type.fonts.filter((x) => OPEN_FONT_FAMILIES.includes(x.family))) {
+  for (const f of present.filter((x) => OPEN_FONT_FAMILIES.includes(x.family))) {
     const file = f.file.replace(/^fonts\//, '');
     fontFiles.push({ ...f, file, size: await sizeOf(`assets/fonts/${file}`) });
   }

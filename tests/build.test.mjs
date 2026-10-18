@@ -115,3 +115,10 @@ test('brand-licensed assets are not published: no logos, icons, patterns or non-
   assert.ok(!/Hero\.otf|BlueOcean/.test(downloads), 'downloads page must not offer Hero or Blue Ocean');
   assert.ok(!files.some((f) => f === 'brand/index.html'), 'the brand page lives on the brand site now');
 });
+
+test('every font file a stylesheet points at was written to dist', async () => {
+  for (const css of ['fonts.css', 'fonts-cave.css']) {
+    const text = await readFile(path.join(DIST, 'assets', css), 'utf8');
+    for (const m of text.matchAll(/url\("([^"]+)"\)/g)) await stat(path.join(DIST, m[1]));
+  }
+});

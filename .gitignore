@@ -3,3 +3,7 @@ dist
 .DS_Store
 *.log
 .firebase
+
+# Third-party fonts that are not open licensed (see README)
+source/fonts/Hero*.otf
+source/fonts/BlueOcean.ttf
