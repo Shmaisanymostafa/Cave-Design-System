@@ -1,0 +1,21 @@
+<!-- @dsCard group="Navigation" height=190 subtitle="Page title, subtitle and toolbar actions" -->
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+html,body{margin:0}
+*,*::before,*::after{box-sizing:border-box}
+img,svg{max-width:100%}
+body{background:var(--surface);color:var(--ink);font:14px/20px var(--ui-font)}
+.pad{padding:var(--space-4)}
+.row{display:flex;gap:var(--space-3);flex-wrap:wrap;align-items:center}
+.col{display:flex;flex-direction:column;gap:var(--space-3)}
+.dark{background:var(--surface);color:var(--ink)}
+.cap{margin:0 0 var(--space-2);color:var(--ink-muted);font:500 12px/16px var(--ui-font)}
+
+</style></head><body>
+<div class="pad"><div class="cv-page-header">
+  <div><h1 class="cv-page-title">Products</h1><p class="cv-page-sub">128 products across 3 branches</p></div>
+  <div class="cv-toolbar"><div class="cv-field" style="flex:1 1 180px;min-width:0"><input class="cv-input" placeholder="Search products" aria-label="Search products"></div>
+  <button class="cv-btn cv-btn--secondary">Export</button><button class="cv-btn cv-btn--primary"><svg class="cv-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Add product</button></div>
+</div></div>
+</body></html>

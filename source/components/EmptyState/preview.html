@@ -1,0 +1,20 @@
+<!-- @dsCard group="Feedback" height=350 subtitle="Empty state and loading skeleton" -->
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+html,body{margin:0}html{overflow-y:auto}body{overflow-x:hidden}
+*,*::before,*::after{box-sizing:border-box}
+img,svg{max-width:100%}
+body{background:var(--surface);color:var(--ink);font:14px/20px var(--ui-font)}
+.pad{padding:var(--space-4)}
+.row{display:flex;gap:var(--space-3);flex-wrap:wrap;align-items:center}
+.col{display:flex;flex-direction:column;gap:var(--space-3)}
+.dark{background:var(--surface);color:var(--ink)}
+.cap{margin:0 0 var(--space-2);color:var(--ink-muted);font:500 12px/16px var(--ui-font)}
+
+</style></head><body>
+<div class="pad"><div class="row" style="align-items:stretch;gap:var(--space-4)">
+<div class="cv-card" style="flex:1 1 260px;min-width:0;padding:0"><div class="cv-empty"><div class="cv-empty__mark"><svg class="cv-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 7.5L12 3l8.5 4.5v9L12 21l-8.5-4.5z"/><path d="M3.5 7.5L12 12l8.5-4.5M12 12v9"/></svg></div><h3 class="cv-empty__title">No products yet</h3><p class="cv-empty__body">Add your first product to start selling, or import a list from a spreadsheet.</p><button class="cv-btn cv-btn--primary"><svg class="cv-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Add product</button></div></div>
+<div class="cv-card" style="flex:1 1 260px;min-width:0"><div class="col" style="gap:var(--space-12)"><span class="cv-skeleton" style="width:40%"></span><span class="cv-skeleton"></span><span class="cv-skeleton" style="width:85%"></span><span class="cv-skeleton" style="width:60%"></span></div></div>
+</div></div>
+</body></html>

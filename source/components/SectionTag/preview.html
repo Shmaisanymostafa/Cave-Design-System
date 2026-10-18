@@ -1,0 +1,18 @@
+<!-- @dsCard group="Brand" height=300 subtitle="Section tab, large and compact" -->
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+html,body{margin:0}
+body{background:var(--surface);color:var(--ink);font:14px/20px var(--font-sans);padding:var(--space-4) 0}
+.row{display:flex;flex-direction:column;gap:var(--space-4);align-items:flex-start;max-width:100%}
+.tab{display:inline-block;max-width:100%;box-sizing:border-box;background:var(--accent);color:var(--white);font:32px/40px var(--font-display);text-transform:uppercase;padding:var(--space-3) calc(var(--space-6) - var(--space-3)) var(--space-3) var(--space-5);border-radius:0 var(--radius-pill) var(--radius-pill) 0}
+.tab.wide{padding-right:calc(var(--space-6) + var(--space-5))}
+.small{display:inline-block;background:var(--accent);color:var(--on-accent);font:16px/24px var(--font-display);text-transform:uppercase;padding:var(--space-1) var(--space-3);border-radius:var(--radius-pill)}
+.cap{padding:0 var(--space-4);display:flex;flex-wrap:wrap;gap:var(--space-3);align-items:center;color:var(--ink-muted)}
+</style></head><body>
+<div class="row">
+  <span class="tab">Goal</span>
+  <span class="tab wide">Symbols</span>
+  <div class="cap"><span class="small">Logo</span><span>Compact tag, 16px, navy on teal</span></div>
+</div>
+</body></html>

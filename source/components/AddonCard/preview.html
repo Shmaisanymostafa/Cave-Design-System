@@ -1,0 +1,43 @@
+<!-- @dsCard group="Data" height=1180 subtitle="Add-on card, stepper and order bar; Light, Dark, Black" -->
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+html,body{margin:0}html{overflow-y:auto}body{overflow-x:hidden}
+*,*::before,*::after{box-sizing:border-box}
+body{background:var(--surface);color:var(--ink);font:14px/20px var(--ui-font)}
+.pad{padding:var(--space-4)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:var(--space-3);align-items:stretch}
+.dark{background:var(--surface);color:var(--ink)}
+.bar{margin-block-start:var(--space-3)}
+</style></head><body>
+<template id="set">
+<div class="grid">
+  <article class="cv-addon">
+    <div class="cv-addon__head"><h3 class="cv-addon__title">Sales funnel</h3><span class="cv-badge cv-badge--brand">Feature</span></div>
+    <p class="cv-addon__desc">See where visitors drop off before they order.</p>
+    <ul class="cv-addon__list"><li><svg class="cv-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Sales funnel analytics</li></ul>
+    <div><div class="cv-addon__price"><span class="cv-addon__now cv-ltr">$3.00</span><span class="cv-addon__was cv-ltr">$6.00</span><span class="cv-badge cv-badge--success">50% off</span></div><p class="cv-addon__unit">per month</p></div>
+    <div class="cv-addon__actions"><span></span><button class="cv-btn cv-btn--secondary">Add to order</button></div>
+  </article>
+  <article class="cv-addon is-selected">
+    <div class="cv-addon__head"><h3 class="cv-addon__title">Extra branches</h3><span class="cv-badge cv-badge--info">Extra room</span></div>
+    <p class="cv-addon__desc">Run more locations from one shop.</p>
+    <ul class="cv-addon__list"><li><svg class="cv-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Multiple branches</li><li><svg class="cv-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>+1 branch each</li></ul>
+    <div><div class="cv-addon__price"><span class="cv-addon__now cv-ltr">$4.00</span></div><p class="cv-addon__unit">per branch / month</p></div>
+    <div class="cv-addon__actions"><span class="cv-stepper"><button class="cv-icon-btn" aria-label="Fewer"><svg class="cv-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12"/></svg></button><output class="cv-ltr">2</output><button class="cv-icon-btn" aria-label="More"><svg class="cv-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6v12M6 12h12"/></svg></button></span><button class="cv-btn cv-btn--secondary">Remove</button></div>
+  </article>
+  <article class="cv-addon">
+    <div class="cv-addon__head"><h3 class="cv-addon__title">Product image gallery</h3><span class="cv-badge cv-badge--brand">Feature</span></div>
+    <p class="cv-addon__desc">Up to 5 pictures per product.</p>
+    <ul class="cv-addon__list"><li><svg class="cv-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Product image gallery</li></ul>
+    <div><div class="cv-addon__price"><span class="cv-addon__now cv-ltr">$2.00</span></div><p class="cv-addon__unit">per month</p></div>
+    <p class="cv-addon__note">Included in your plan</p>
+  </article>
+</div>
+<div class="cv-orderbar bar"><div><p class="cv-orderbar__sum">Your order · Monthly</p><p class="cv-orderbar__total cv-ltr">$11.00</p></div><button class="cv-btn cv-btn--primary">Continue to payment</button></div>
+</template>
+<div class="pad" id="a"></div><div class="dark pad" id="b" data-theme="dark"></div><div class="dark pad" id="c" data-theme="black"></div>
+<script>
+for (const id of ['a','b','c']) document.getElementById(id).appendChild(document.getElementById('set').content.cloneNode(true));
+</script>
+</body></html>

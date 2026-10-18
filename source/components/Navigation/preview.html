@@ -1,0 +1,47 @@
+<!-- @dsCard group="Navigation" height=1030 subtitle="Sidebar for desktop and web, bottom bar for mobile; Light, Dark, Black" -->
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+html,body{margin:0}html{overflow-y:auto}body{overflow-x:hidden}
+*,*::before,*::after{box-sizing:border-box}
+img,svg{max-width:100%}
+body{background:var(--surface);color:var(--ink);font:14px/20px var(--ui-font)}
+.pad{padding:var(--space-4)}
+.row{display:flex;gap:var(--space-3);flex-wrap:wrap;align-items:center}
+.col{display:flex;flex-direction:column;gap:var(--space-3)}
+.dark{background:var(--surface);color:var(--ink)}
+.cap{margin:0 0 var(--space-2);color:var(--ink-muted);font:500 12px/16px var(--ui-font)}
+
+</style></head><body>
+<div class="pad"><div class="row" style="align-items:flex-start;gap:var(--space-4)">
+<nav class="cv-sidebar" aria-label="Main" style="flex:0 1 224px;width:auto;min-width:0">
+<a class="cv-nav-item" href="#" aria-current="page"><svg class="cv-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7v8.5a1 1 0 01-1 1h-4v-6H9v6H5a1 1 0 01-1-1z"/></svg>Dashboard</a>
+<a class="cv-nav-item" href="#"><svg class="cv-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h2l2 10h9l2-7H7"/><circle cx="9.5" cy="19" r="1"/><circle cx="16.5" cy="19" r="1"/></svg>Orders</a>
+<a class="cv-nav-item" href="#"><svg class="cv-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 7.5L12 3l8.5 4.5v9L12 21l-8.5-4.5z"/><path d="M3.5 7.5L12 12l8.5-4.5M12 12v9"/></svg>Products</a>
+<a class="cv-nav-item" href="#"><svg class="cv-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V10M12 20V4M19 20v-7"/></svg>Analytics</a>
+<div class="cv-nav-section">Account</div>
+<a class="cv-nav-item" href="#"><svg class="cv-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M18.4 5.6l-1.8 1.8M7.4 16.6l-1.8 1.8"/></svg>Settings</a></nav>
+<div style="flex:1 1 260px;min-width:0;max-width:360px;border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden"><div class="cv-bottomnav">
+<a class="cv-nav-item" href="#" aria-current="page"><svg class="cv-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7v8.5a1 1 0 01-1 1h-4v-6H9v6H5a1 1 0 01-1-1z"/></svg>Home</a><a class="cv-nav-item" href="#"><svg class="cv-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h2l2 10h9l2-7H7"/><circle cx="9.5" cy="19" r="1"/><circle cx="16.5" cy="19" r="1"/></svg>Orders</a><a class="cv-nav-item" href="#"><svg class="cv-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 7.5L12 3l8.5 4.5v9L12 21l-8.5-4.5z"/><path d="M3.5 7.5L12 12l8.5-4.5M12 12v9"/></svg>Products</a><a class="cv-nav-item" href="#"><svg class="cv-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M18.4 5.6l-1.8 1.8M7.4 16.6l-1.8 1.8"/></svg>Settings</a></div></div>
+</div></div><div class="dark pad" data-theme="dark"><div class="row" style="align-items:flex-start;gap:var(--space-4)">
+<nav class="cv-sidebar" aria-label="Main" style="flex:0 1 224px;width:auto;min-width:0">
+<a class="cv-nav-item" href="#" aria-current="page"><svg class="cv-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7v8.5a1 1 0 01-1 1h-4v-6H9v6H5a1 1 0 01-1-1z"/></svg>Dashboard</a>
+<a class="cv-nav-item" href="#"><svg class="cv-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h2l2 10h9l2-7H7"/><circle cx="9.5" cy="19" r="1"/><circle cx="16.5" cy="19" r="1"/></svg>Orders</a>
+<a class="cv-nav-item" href="#"><svg class="cv-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 7.5L12 3l8.5 4.5v9L12 21l-8.5-4.5z"/><path d="M3.5 7.5L12 12l8.5-4.5M12 12v9"/></svg>Products</a>
+<a class="cv-nav-item" href="#"><svg class="cv-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V10M12 20V4M19 20v-7"/></svg>Analytics</a>
+<div class="cv-nav-section">Account</div>
+<a class="cv-nav-item" href="#"><svg class="cv-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M18.4 5.6l-1.8 1.8M7.4 16.6l-1.8 1.8"/></svg>Settings</a></nav>
+<div style="flex:1 1 260px;min-width:0;max-width:360px;border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden"><div class="cv-bottomnav">
+<a class="cv-nav-item" href="#" aria-current="page"><svg class="cv-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7v8.5a1 1 0 01-1 1h-4v-6H9v6H5a1 1 0 01-1-1z"/></svg>Home</a><a class="cv-nav-item" href="#"><svg class="cv-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h2l2 10h9l2-7H7"/><circle cx="9.5" cy="19" r="1"/><circle cx="16.5" cy="19" r="1"/></svg>Orders</a><a class="cv-nav-item" href="#"><svg class="cv-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 7.5L12 3l8.5 4.5v9L12 21l-8.5-4.5z"/><path d="M3.5 7.5L12 12l8.5-4.5M12 12v9"/></svg>Products</a><a class="cv-nav-item" href="#"><svg class="cv-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M18.4 5.6l-1.8 1.8M7.4 16.6l-1.8 1.8"/></svg>Settings</a></div></div>
+</div></div><div class="dark pad" data-theme="black"><div class="row" style="align-items:flex-start;gap:var(--space-4)">
+<nav class="cv-sidebar" aria-label="Main" style="flex:0 1 224px;width:auto;min-width:0">
+<a class="cv-nav-item" href="#" aria-current="page"><svg class="cv-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7v8.5a1 1 0 01-1 1h-4v-6H9v6H5a1 1 0 01-1-1z"/></svg>Dashboard</a>
+<a class="cv-nav-item" href="#"><svg class="cv-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h2l2 10h9l2-7H7"/><circle cx="9.5" cy="19" r="1"/><circle cx="16.5" cy="19" r="1"/></svg>Orders</a>
+<a class="cv-nav-item" href="#"><svg class="cv-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 7.5L12 3l8.5 4.5v9L12 21l-8.5-4.5z"/><path d="M3.5 7.5L12 12l8.5-4.5M12 12v9"/></svg>Products</a>
+<a class="cv-nav-item" href="#"><svg class="cv-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V10M12 20V4M19 20v-7"/></svg>Analytics</a>
+<div class="cv-nav-section">Account</div>
+<a class="cv-nav-item" href="#"><svg class="cv-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M18.4 5.6l-1.8 1.8M7.4 16.6l-1.8 1.8"/></svg>Settings</a></nav>
+<div style="flex:1 1 260px;min-width:0;max-width:360px;border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden"><div class="cv-bottomnav">
+<a class="cv-nav-item" href="#" aria-current="page"><svg class="cv-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7v8.5a1 1 0 01-1 1h-4v-6H9v6H5a1 1 0 01-1-1z"/></svg>Home</a><a class="cv-nav-item" href="#"><svg class="cv-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h2l2 10h9l2-7H7"/><circle cx="9.5" cy="19" r="1"/><circle cx="16.5" cy="19" r="1"/></svg>Orders</a><a class="cv-nav-item" href="#"><svg class="cv-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 7.5L12 3l8.5 4.5v9L12 21l-8.5-4.5z"/><path d="M3.5 7.5L12 12l8.5-4.5M12 12v9"/></svg>Products</a><a class="cv-nav-item" href="#"><svg class="cv-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M18.4 5.6l-1.8 1.8M7.4 16.6l-1.8 1.8"/></svg>Settings</a></div></div>
+</div></div>
+</body></html>
