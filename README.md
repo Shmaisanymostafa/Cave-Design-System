@@ -27,8 +27,10 @@ The design system lives in a claude.ai artifact, so the snapshot is refreshed by
 
 ## Deploying (Firebase Hosting)
 
-1. Create a Firebase project and a Hosting site for it.
-2. `firebase use --add` in this folder (this writes `.firebaserc`), then `npm run build && firebase deploy --only hosting`.
+The Firebase project is `cave-design-system` (Hosting site `cave-design-system`, default URL https://cave-design-system.web.app); `.firebaserc` points at it. It belongs to the shmaisanimostafa@gmail.com Google account, so pass that account (the CLI's default may be another one):
+
+1. `npm run build`
+2. `firebase deploy --only hosting --account shmaisanimostafa@gmail.com`
 3. In the Hosting console add the custom domain `design.cave.technology` and the DNS records it shows.
 
 `firebase.json` serves `dist/` with clean URLs, no-cache HTML, short asset caching, `noindex` on `/previews/`, and the same security headers as the other Cave sites.
