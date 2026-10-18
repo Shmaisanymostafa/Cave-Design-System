@@ -44,7 +44,7 @@ ${item('/foundations/layout', t.navLayout)}
 ${item('/components', t.components.all)}
 ${inComponents ? `<div class="sub">${componentLinks}</div>` : ''}
 <div class="cv-nav-section">${esc(t.navBrand)}</div>
-${item('/brand', t.navBrand)}
+<a class="cv-nav-item" href="${t.brandSiteUrl}">${esc(t.navBrandSite)} ↗</a>
 ${item('/guidelines', t.navGuidelines)}
 ${item('/platforms', t.navPlatforms)}
 ${item('/downloads', t.navDownloads)}
@@ -56,12 +56,13 @@ function renderFooter(lang, meta) {
   const year = new Date().getFullYear();
   const links = FOOTER_LINKS[lang].map(([label, url]) => `<li><a href="${url}">${esc(label)}</a></li>`).join('');
   const alt = lang === 'ar' ? 'كهف' : 'Cave';
+  const brandLink = `<li><a href="${t.brandSiteUrl}">${esc(t.navBrandSite)}</a></li>`;
   return `<footer class="cv-footer site-footer"><div class="cv-footer__stack">
-<img class="cv-footer__logo logo-light" src="/assets/logos/cave-logo-${lang}-color-compact.svg" alt="${alt}" height="40">
-<img class="cv-footer__logo logo-dark" src="/assets/logos/cave-logo-${lang}-white-compact.svg" alt="" height="40">
+<img class="cv-footer__logo logo-light" src="/assets/logos/cave-symbol-color.svg" alt="${alt}" height="40" style="height:40px;width:40px">
+<img class="cv-footer__logo logo-dark" src="/assets/logos/cave-symbol-white.svg" alt="" height="40" style="height:40px;width:40px">
 <p class="cv-footer__copy">${esc(t.footer.copy(year))}</p>
 <p class="cv-footer__copy" style="margin-top:4px;font-size:13px">${t.footer.version(esc(meta.version), esc(meta.date))}</p>
-<ul class="cv-footer__links">${links}</ul>
+<ul class="cv-footer__links">${links}${brandLink}</ul>
 </div></footer>`;
 }
 
@@ -96,7 +97,7 @@ ${route === '/404' ? '' : `<link rel="alternate" hreflang="x-default" href="${OR
 <meta name="theme-color" content="#182643">
 <link rel="icon" type="image/svg+xml" href="/assets/logos/cave-symbol-color.svg">
 <script>${THEME_BOOT}</script>
-<link rel="stylesheet" href="/assets/fonts.css">
+<link rel="stylesheet" href="/assets/fonts-cave.css">
 <link rel="stylesheet" href="/assets/tokens.css">
 <link rel="stylesheet" href="/assets/components.css">
 <link rel="stylesheet" href="/assets/site.css">

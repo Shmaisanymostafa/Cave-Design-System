@@ -57,7 +57,7 @@ test('every page exists in English and Arabic, with the right direction', async 
   const en = files.filter((f) => f.endsWith('index.html') && !f.startsWith('ar/') && !f.startsWith('previews/'));
   const ar = files.filter((f) => f.startsWith('ar/') && f.endsWith('index.html'));
   assert.equal(en.length, ar.length);
-  assert.ok(en.length >= 25);
+  assert.ok(en.length >= 20);
   for (const f of ar) assert.match(await readFile(path.join(DIST, f), 'utf8'), /<html lang="ar" dir="rtl"/);
   for (const f of en) assert.match(await readFile(path.join(DIST, f), 'utf8'), /<html lang="en" dir="ltr"/);
 });
@@ -86,12 +86,14 @@ test('raw HTML in markdown is shown as text, not run', async () => {
 test('every component has a preview, a README and appears in both languages', async () => {
   const comps = (await readdir(path.join(ROOT, 'source', 'components'), { withFileTypes: true })).filter((e) => e.isDirectory());
   let n = 0;
+  const brandOnly = new Set(['Logo', 'SectionTag']); // on the brand site
   for (const c of comps) {
+    if (brandOnly.has(c.name)) continue;
     try { await stat(path.join(ROOT, 'source', 'components', c.name, 'README.md')); } catch { continue; }
     n += 1;
     await stat(path.join(DIST, 'previews', `${c.name}.html`));
   }
-  assert.ok(n >= 18);
+  assert.ok(n >= 16);
   const idx = await readFile(path.join(DIST, 'components', 'index.html'), 'utf8');
   assert.equal((idx.match(/class="card"/g) || []).length, n);
 });
@@ -101,4 +103,15 @@ test('the platform mapping page is kept out of search', async () => {
   assert.match(html, /noindex/);
   const sitemap = await readFile(path.join(DIST, 'sitemap.xml'), 'utf8');
   assert.ok(!sitemap.includes('/platforms'));
+});
+
+test('brand-licensed assets are not published: no logos, icons, patterns or non-open fonts offered', async () => {
+  const files = (await walk(DIST)).map((f) => path.relative(DIST, f));
+  assert.ok(!files.some((f) => /cave-logo|cave-icon|cave-pattern/.test(f)), 'logo, icon or pattern file in dist');
+  assert.ok(!files.some((f) => /BlueOcean/i.test(f)), 'Blue Ocean in dist');
+  const fontsCss = await readFile(path.join(DIST, 'assets', 'fonts.css'), 'utf8');
+  assert.ok(!/Hero|Blue Ocean/.test(fontsCss), 'downloadable fonts.css must list only open fonts');
+  const downloads = await readFile(path.join(DIST, 'downloads', 'index.html'), 'utf8');
+  assert.ok(!/Hero\.otf|BlueOcean/.test(downloads), 'downloads page must not offer Hero or Blue Ocean');
+  assert.ok(!files.some((f) => f === 'brand/index.html'), 'the brand page lives on the brand site now');
 });

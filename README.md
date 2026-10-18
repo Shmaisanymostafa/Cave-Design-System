@@ -4,6 +4,12 @@ The public website of the Cave design system. A static site generated from the d
 
 English at `/`, Arabic (right to left) at `/ar/`. Light, Dark, Black and System themes.
 
+## Scope: code and docs only
+
+This site is the open-source design system. Brand assets (logo, symbol, icons, patterns, the Hero font) are not open source and live on the separate brand site, https://brand.cave.technology (`../brand.cave.technology`). Only the symbol appears here, as a "built by Cave" credit. The build leaves the brand-only components (Logo, Section tag) out, offers only the open fonts (Poppins, Almarai, SIL OFL) for download, and a test fails if a logo, icon, pattern or non-open font reaches `dist/`. Hero is served only so this site can set its own headings.
+
+Follow-up before the packages are published: the Cave-specific patterns (Auth card, Add-on card, Footer, Powered by Cave) and the Cave product rules in the guidelines page should be separated from the core components.
+
 ## How it works
 
 - `source/` is a snapshot of the Cave design system artifact (claude.ai/artifact/SSNhnZjFs1D45nxEVbvTNE): `tokens.json`, `README.md`, `Platform-mapping.md`, `components/` (bundle.css, each component's README and preview), `fonts/`, `logos/`, `icons/`, and `meta.json` (version and last change).

@@ -37,13 +37,13 @@ export function homePage(lang, d) {
     ['typography', '/foundations/typography', STR[lang].navTypography],
     ['layout', '/foundations/layout', STR[lang].navLayout],
     ['components', '/components', STR[lang].navComponents],
-    ['brand', '/brand', STR[lang].navBrand],
+    ['brand', null, STR[lang].navBrand],
     ['guidelines', '/guidelines', STR[lang].navGuidelines],
     ['platforms', '/platforms', STR[lang].navPlatforms],
     ['downloads', '/downloads', STR[lang].navDownloads],
   ];
   const cards = sectionKeys
-    .map(([k, route, label]) => `<li><a class="card" href="${href(lang, route)}"><b>${esc(label)}</b><span>${esc(t.sections[k])}</span></a></li>`)
+    .map(([k, route, label]) => `<li><a class="card" href="${route ? href(lang, route) : STR[lang].brandSiteUrl}"><b>${esc(label)}</b><span>${esc(t.sections[k])}</span></a></li>`)
     .join('');
   const principles = t.principles.map(([b, s]) => `<li><b>${esc(b)}</b><span>${esc(s)}</span></li>`).join('');
   return `<section class="hero">
@@ -187,34 +187,6 @@ ${c.rest ? `<section id="guidance"><h2>${esc(t.guidance)}</h2>${englishNote(lang
 <nav class="pager" aria-label="${esc(t.title)}">${prevLink}${nextLink}</nav>`;
 }
 
-function logoGround(lang, file, cls, label, tl) {
-  return `<li class="ground ${cls}"><img src="/assets/logos/${file}" alt="${esc(label)}" height="120"><small>${esc(label)}</small><a href="/assets/logos/${file}" download>${esc(tl.download)}</a></li>`;
-}
-
-export function brandPage(lang, d) {
-  const t = STR[lang].brand;
-  const R = d.readme.map;
-  const logos = [
-    logoGround(lang, 'cave-logo-en-color-compact.svg', 'g-white', `${t.english}, ${t.fullColour}`, t),
-    logoGround(lang, 'cave-logo-en-white-compact.svg', 'g-navy', `${t.english}, ${t.reversed}`, t),
-    logoGround(lang, 'cave-logo-ar-color-compact.svg', 'g-paper', `${t.arabic}, ${t.fullColour}`, t),
-    logoGround(lang, 'cave-logo-ar-white-compact.svg', 'g-charcoal', `${t.arabic}, ${t.reversed}`, t),
-    logoGround(lang, 'cave-symbol-color.svg', 'g-white', `${t.symbol}, ${t.fullColour}`, t),
-    logoGround(lang, 'cave-symbol-white.svg', 'g-teal', `${t.symbol}, ${t.reversed}`, t),
-  ].join('');
-  const icons = d.icons
-    .map((f) => `<li><img src="/assets/icons/${f}" alt="" height="80"><small>${esc(f.replace(/^cave-icon-|\.svg$/g, ''))}</small></li>`)
-    .join('');
-  return `${head(lang, STR[lang].navBrand, t.title, t.lead)}
-${englishNote(lang)}
-${docBlock(lang, md(d.readme.intro))}
-<section id="logos"><h2>${esc(t.logosTitle)}</h2><p class="sec-lead">${esc(t.logosLead)}</p><ul class="grounds">${logos}</ul></section>
-<section id="logo-rules"><h2>${esc(t.markTitle)}</h2>${docBlock(lang, md(R.get('The logo')))}</section>
-<section id="voice"><h2>${esc(t.voiceTitle)}</h2>${docBlock(lang, md(R.get('Content fundamentals')))}</section>
-<section id="icons"><h2>${esc(t.iconsTitle)}</h2><p class="sec-lead">${esc(t.iconsLead)}</p><ul class="icons">${icons}</ul>${docBlock(lang, md(R.get('Iconography')))}</section>
-<section id="stationery"><h2>${esc(t.stationeryTitle)}</h2>${docBlock(lang, md(R.get('Stationery')))}</section>`;
-}
-
 export function guidelinesPage(lang, d) {
   const t = STR[lang].guidelines;
   return `${head(lang, STR[lang].navBrand, t.title, t.lead)}${englishNote(lang)}${docBlock(lang, md(d.readme.map.get('Product interface')), true)}`;
@@ -239,12 +211,11 @@ export function downloadsPage(lang, d) {
     row('/assets/cave_tokens.dart', t.tokensDart, t.tokensDartText, sizes.tokensDart),
   ].join('');
   const fonts = d.fonts.map((f) => `<tr><td><a href="/assets/fonts/${esc(f.file)}" download><code>${esc(f.file)}</code></a></td><td class="use">${esc(f.family)} ${esc(f.weight)}${f.style ? ` ${esc(f.style)}` : ''}</td><td class="num">${kb(f.size)}</td></tr>`).join('');
-  const logos = d.logos.map((f) => `<tr><td><a href="/assets/logos/${esc(f.file)}" download><code>${esc(f.file)}</code></a></td><td class="use"></td><td class="num">${kb(f.size)}</td></tr>`).join('');
   const table = (rows) => `<div class="tcard"><div class="tscroll"><table class="tbl"><thead><tr><th>${esc(t.file)}</th><th></th><th>${esc(t.size)}</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
   return `${head(lang, STR[lang].navBrand, t.title, t.lead)}
 <section id="code"><h2>${esc(t.codeTitle)}</h2>${table(code)}</section>
-<section id="fonts"><h2>${esc(t.fontsTitle)}</h2>${table(fonts)}</section>
-<section id="logos"><h2>${esc(t.logosTitle)}</h2>${table(logos)}</section>`;
+<section id="fonts"><h2>${esc(t.fontsTitle)}</h2><p class="sec-lead">${esc(t.fontsNote)}</p>${table(fonts)}</section>
+<section id="brand"><h2>${esc(t.logosTitle)}</h2><p class="sec-lead">${esc(t.logosNote)}</p><a class="cv-btn cv-btn--secondary" href="${STR[lang].brandSiteUrl}">${esc(t.logosLink)}</a></section>`;
 }
 
 export function notFoundPage(lang) {
@@ -252,4 +223,4 @@ export function notFoundPage(lang) {
   return `<section class="hero"><h1>404</h1><p class="lead">${esc(t.text)}</p><div class="hero__actions"><a class="cv-btn cv-btn--primary cv-btn--lg" href="${href(lang, '/')}">${esc(t.back)}</a></div></section>`;
 }
 
-export { leadAndRest, sections };
+

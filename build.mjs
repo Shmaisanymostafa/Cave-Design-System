@@ -16,6 +16,9 @@ const TITLES = {
   AddonCard: 'Add-on card', AuthCard: 'Auth card', DataTable: 'Data table', EmptyState: 'Empty state', PageHeader: 'Page header',
   PoweredByCave: 'Powered by Cave', SectionTag: 'Section tag', StatusBadge: 'Status badge', TextField: 'Text field',
 };
+// Brand components live on the brand site; the Cover is a slide, not a component.
+const BRAND_ONLY = new Set(['Logo', 'SectionTag']);
+const OPEN_FONT_FAMILIES = ['Poppins', 'Almarai']; // SIL OFL, safe to offer; Hero and Blue Ocean are licensed to Cave
 const GROUP_ORDER = ['Actions', 'Forms', 'Data', 'Feedback', 'Overlays', 'Navigation', 'Brand'];
 
 const read = (...p) => readFile(path.join(SRC, ...p), 'utf8');
@@ -39,7 +42,7 @@ async function loadComponents() {
   const list = [];
   for (const name of dirs) {
     const readmePath = path.join(SRC, 'components', name, 'README.md');
-    if (!(await exists(readmePath))) continue; // not a product component (the Cover has no README)
+    if (BRAND_ONLY.has(name) || !(await exists(readmePath))) continue; // not a product component (the Cover has no README)
     const previewHtml = await read('components', name, 'preview.html');
     const { lead, rest } = leadAndRest(await read('components', name, 'README.md'));
     const slugName = name.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
@@ -79,22 +82,25 @@ export async function build() {
 
   // Generated assets
   const tokensCss = buildTokensCss(tokens);
-  const fontsCss = buildFontsCss(tokens);
+  const fontsCss = buildFontsCss(tokens, { families: OPEN_FONT_FAMILIES });
+  const fontsCave = buildFontsCss(tokens, { families: [...OPEN_FONT_FAMILIES, 'Hero'] });
   const dart = buildDart(tokens);
   const componentsCss = await read('components', 'bundle.css');
   await writeOut('assets/tokens.css', tokensCss);
   await writeOut('assets/fonts.css', fontsCss);
+  await writeOut('assets/fonts-cave.css', fontsCave);
   await writeOut('assets/components.css', componentsCss);
   await writeOut('assets/cave_tokens.dart', dart);
   await writeOut('assets/tokens.json', JSON.stringify(tokens, null, 1));
   await cp(path.join(ROOT, 'site', 'site.css'), path.join(OUT, 'assets', 'site.css'));
   await cp(path.join(ROOT, 'site', 'site.js'), path.join(OUT, 'assets', 'site.js'));
-  await cp(path.join(SRC, 'fonts'), path.join(OUT, 'assets', 'fonts'), { recursive: true });
-  await cp(path.join(SRC, 'logos'), path.join(OUT, 'assets', 'logos'), { recursive: true });
-  await cp(path.join(SRC, 'icons'), path.join(OUT, 'assets', 'icons'), { recursive: true });
+  // Fonts: the open ones are offered for download; Hero is served only so this site can set its own headings.
+  const servedFonts = tokens.type.fonts.filter((f) => [...OPEN_FONT_FAMILIES, 'Hero'].includes(f.family));
+  for (const f of servedFonts) await cp(path.join(SRC, f.file), path.join(OUT, 'assets', f.file));
+  for (const f of ['cave-symbol-color.svg', 'cave-symbol-white.svg']) await cp(path.join(SRC, 'logos', f), path.join(OUT, 'assets', 'logos', f));
 
   // Component previews: the preview files as they are, with the tokens, fonts and components linked in.
-  const links = '<link rel="stylesheet" href="/assets/fonts.css"><link rel="stylesheet" href="/assets/tokens.css"><link rel="stylesheet" href="/assets/components.css">';
+  const links = '<link rel="stylesheet" href="/assets/fonts-cave.css"><link rel="stylesheet" href="/assets/tokens.css"><link rel="stylesheet" href="/assets/components.css">';
   for (const c of components) {
     const html = c.previewHtml.replace(/<head>/i, `<head>${links}`);
     await writeOut(`previews/${c.name}.html`, html);
@@ -102,14 +108,10 @@ export async function build() {
 
   const sizeOf = async (rel) => (await stat(path.join(OUT, rel))).size;
   const fontFiles = [];
-  for (const f of tokens.type.fonts) {
+  for (const f of tokens.type.fonts.filter((x) => OPEN_FONT_FAMILIES.includes(x.family))) {
     const file = f.file.replace(/^fonts\//, '');
     fontFiles.push({ ...f, file, size: await sizeOf(`assets/fonts/${file}`) });
   }
-  const logoNames = (await readdir(path.join(SRC, 'logos'))).sort();
-  const logos = [];
-  for (const file of logoNames) logos.push({ file, size: await sizeOf(`assets/logos/${file}`) });
-  const icons = (await readdir(path.join(SRC, 'icons'))).sort();
 
   const data = {
     tokens,
@@ -117,9 +119,7 @@ export async function build() {
     platformMapping,
     components,
     resolver,
-    icons,
     fonts: fontFiles,
-    logos,
     counts: {
       colours: tokens.color.tokens.length,
       styles: tokens.type.groups.reduce((n, g) => n + g.styles.length, 0),
@@ -142,7 +142,6 @@ export async function build() {
     { route: '/foundations/typography', title: (l) => STR[l].type.title, body: pages.typographyPage, desc: (l) => STR[l].type.lead },
     { route: '/foundations/layout', title: (l) => STR[l].layout.title, body: pages.layoutPage, desc: (l) => STR[l].layout.lead },
     { route: '/components', title: (l) => STR[l].components.title, body: pages.componentsIndexPage, desc: (l) => STR[l].components.lead },
-    { route: '/brand', title: (l) => STR[l].brand.title, body: pages.brandPage, desc: (l) => STR[l].brand.lead },
     { route: '/guidelines', title: (l) => STR[l].guidelines.title, body: pages.guidelinesPage, desc: (l) => STR[l].guidelines.lead },
     { route: '/platforms', title: (l) => STR[l].platforms.title, body: pages.platformsPage, desc: (l) => STR[l].platforms.lead, noindex: true },
     { route: '/downloads', title: (l) => STR[l].downloads.title, body: pages.downloadsPage, desc: (l) => STR[l].downloads.lead },

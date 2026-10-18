@@ -43,8 +43,9 @@ export function buildTokensCss(tokens) {
   return out.join('\n') + '\n';
 }
 
-export function buildFontsCss(tokens, base = '/assets/fonts/') {
+export function buildFontsCss(tokens, { base = '/assets/fonts/', families = null } = {}) {
   return tokens.type.fonts
+    .filter((f) => !families || families.includes(f.family))
     .map((f) => {
       const file = f.file.replace(/^fonts\//, '');
       const fmt = file.endsWith('.otf') ? 'opentype' : 'truetype';
