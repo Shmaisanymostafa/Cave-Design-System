@@ -13,7 +13,7 @@ export function href(lang, route) {
   return p === '' ? '/' : p;
 }
 
-const THEME_BOOT = `(function(){try{var c=localStorage.getItem('cave-design-theme')||'system';var t=(c==='light'||c==='dark'||c==='black')?c:(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t)}catch(e){document.documentElement.setAttribute('data-theme','light')}})()`;
+const THEME_BOOT = `(function(){var c='system';try{c=localStorage.getItem('cave-design-theme')||'system'}catch(e){}var t=['light','dark','black'].includes(c)?c:(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);var p=new URLSearchParams(location.search).get('platform');if(!['web','flutter'].includes(p)){try{p=localStorage.getItem('cave-design-platform')}catch(e){}}document.documentElement.setAttribute('data-platform',p==='flutter'?'flutter':'web')})()`;
 
 const FOOTER_LINKS = {
   en: [['Cave', 'https://www.cave.technology'], ['Cave Shops', 'https://shops.cave.technology'], ['Cave POS', 'https://pos.cave.technology']],
@@ -45,6 +45,8 @@ ${item('/components', t.components.all)}
 ${inComponents ? `<div class="sub">${componentLinks}</div>` : ''}
 <div class="cv-nav-section">${esc(t.navBrand)}</div>
 <a class="cv-nav-item" href="${t.brandSiteUrl}">${esc(t.navBrandSite)} ↗</a>
+${item('/templates', lang==='ar'?'القوالب':'Templates')}
+${item('/customization',lang==='ar'?'التخصيص':'Customization')}
 ${item('/guidelines', t.navGuidelines)}
 ${item('/platforms', t.navPlatforms)}
 ${item('/downloads', t.navDownloads)}
@@ -108,15 +110,17 @@ ${route === '/404' ? '' : `<link rel="alternate" hreflang="x-default" href="${OR
 <a class="brand" href="${href(lang, '/')}"><img class="logo-light" src="/assets/logos/cave-symbol-color.svg" alt=""><img class="logo-dark" src="/assets/logos/cave-symbol-white.svg" alt=""><span>${esc(t.siteName)}</span></a>
 <span class="top__space"></span>
 <div class="top__ctl">
+<label class="sr-only" for="platform-select">${lang === 'ar' ? 'المنصة' : 'Platform'}</label>
+<select id="platform-select" disabled class="cv-input" aria-label="${lang === 'ar' ? 'المنصة' : 'Platform'}"><option value="web">${lang === 'ar' ? 'الويب' : 'Web'}</option><option value="flutter">Flutter</option></select>
 <label class="sr-only" for="theme-select">${esc(t.theme)}</label>
-<select id="theme-select" class="cv-input" aria-label="${esc(t.theme)}">${themeOption('system', t.themeSystem)}${themeOption('light', t.themeLight)}${themeOption('dark', t.themeDark)}${themeOption('black', t.themeBlack)}</select>
+<select id="theme-select" disabled class="cv-input" aria-label="${esc(t.theme)}">${themeOption('system', t.themeSystem)}${themeOption('light', t.themeLight)}${themeOption('dark', t.themeDark)}${themeOption('black', t.themeBlack)}</select>
 <a class="lang" href="${href(other, route === '/404' ? '/' : route)}" hreflang="${other}" lang="${other}">${esc(t.otherLang)}</a>
-<button class="cv-btn cv-btn--secondary cv-btn--sm menu-btn" id="menu-btn" aria-expanded="false" aria-controls="side">${esc(t.menu)}</button>
+<button class="cv-btn cv-btn--secondary cv-btn--sm menu-btn" id="menu-btn" disabled aria-expanded="false" aria-controls="side">${esc(t.menu)}</button>
 </div></div></header>
 <div class="frame">
 <aside class="side" id="side">${renderNav(lang, ctx.withRoute(route))}</aside>
 <main class="main" id="main"><div class="page">
-${page.body}
+${page.body.replaceAll('<pre ','<pre tabindex="0" ')}
 </div></main>
 </div>
 ${renderFooter(lang, ctx.meta)}

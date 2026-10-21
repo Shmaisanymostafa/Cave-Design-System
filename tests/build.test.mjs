@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { readFile, readdir, stat } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import {catalog} from '../source/catalog.mjs';
 import { build } from '../build.mjs';
 import { makeResolver, buildTokensCss, CONTRAST_PAIRS, THEMES } from '../src/tokens.mjs';
 import { parseColor, contrast } from '../src/color.mjs';
@@ -54,7 +55,7 @@ test('tokens.css defines every semantic token for all three themes and leaves no
 
 test('every page exists in English and Arabic, with the right direction', async () => {
   const files = (await walk(DIST)).map((f) => path.relative(DIST, f));
-  const en = files.filter((f) => f.endsWith('index.html') && !f.startsWith('ar/') && !f.startsWith('previews/'));
+  const en = files.filter((f) => f.endsWith('index.html') && !f.startsWith('ar/') && !f.startsWith('previews/') && !f.startsWith('flutter-preview/'));
   const ar = files.filter((f) => f.startsWith('ar/') && f.endsWith('index.html'));
   assert.equal(en.length, ar.length);
   assert.ok(en.length >= 20);
@@ -83,26 +84,20 @@ test('raw HTML in markdown is shown as text, not run', async () => {
   assert.ok(!html.includes('<script>'));
 });
 
-test('every component has a preview, a README and appears in both languages', async () => {
-  const comps = (await readdir(path.join(ROOT, 'source', 'components'), { withFileTypes: true })).filter((e) => e.isDirectory());
-  let n = 0;
-  const brandOnly = new Set(['Logo', 'SectionTag']); // on the brand site
-  for (const c of comps) {
-    if (brandOnly.has(c.name)) continue;
-    try { await stat(path.join(ROOT, 'source', 'components', c.name, 'README.md')); } catch { continue; }
-    n += 1;
-    await stat(path.join(DIST, 'previews', `${c.name}.html`));
+test('the canonical catalog has complete bilingual previews, code and guidance', async () => {
+  assert.equal(catalog.length,15);
+  for (const c of catalog) for (const lang of ['en','ar']) {
+    await stat(path.join(DIST,'previews',lang,`${c.name}.html`));
+    await stat(path.join(DIST,'examples/flutter',`${c.slug}_${lang}.dart`));
+    const page=await readFile(path.join(DIST,lang==='ar'?'ar':'','components',c.slug,'index.html'),'utf8');
+    assert.ok(page.includes(c.title[lang]));assert.ok(page.includes('data-platform="flutter"'));assert.ok(page.includes('data-platform="web"'));
+    assert.ok(!page.includes('doc--en'));
   }
-  assert.ok(n >= 16);
-  const idx = await readFile(path.join(DIST, 'components', 'index.html'), 'utf8');
-  assert.equal((idx.match(/class="card"/g) || []).length, n);
 });
 
-test('the platform mapping page is kept out of search', async () => {
-  const html = await readFile(path.join(DIST, 'platforms', 'index.html'), 'utf8');
-  assert.match(html, /noindex/);
-  const sitemap = await readFile(path.join(DIST, 'sitemap.xml'), 'utf8');
-  assert.ok(!sitemap.includes('/platforms'));
+test('the public integration page is indexable and package downloads exist', async () => {
+  const html=await readFile(path.join(DIST,'platforms/index.html'),'utf8');assert.ok(!html.includes('noindex'));
+  for (const name of ['cave-ui-core-0.1.0-alpha.1.tgz','cave-ui-tokens-0.1.0-alpha.1.tgz','cave_ui-0.1.0-alpha.1.tar.gz']) await stat(path.join(DIST,'downloads',name));
 });
 
 test('brand-licensed assets are not published: no logos, icons, patterns or non-open fonts offered', async () => {

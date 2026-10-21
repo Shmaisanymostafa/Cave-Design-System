@@ -8,12 +8,30 @@
     "build": "node build.mjs",
     "serve": "node scripts/serve.mjs",
     "dev": "node build.mjs && node scripts/serve.mjs",
-    "test": "node --test tests/*.test.mjs"
+    "test": "node --test --test-concurrency=1 tests/*.test.mjs",
+    "build:packages": "node scripts/build-packages.mjs",
+    "test:packages": "node --test tests/packages.test.mjs",
+    "pack:packages": "node scripts/pack-packages.mjs",
+    "test:browser": "node tests/browser.mjs",
+    "test:types": "tsc -p tests/tsconfig.json",
+    "build:flutter": "node scripts/build-flutter.mjs",
+    "test:browser:all": "CAVE_BROWSERS=chromium,firefox,webkit node tests/browser.mjs",
+    "test:templates": "node tests/templates-consumer.mjs",
+    "test:flutter:browser": "CAVE_BROWSERS=chromium,firefox,webkit node tests/flutter-browser.mjs"
   },
   "dependencies": {
     "marked": "^15.0.12"
   },
   "engines": {
     "node": ">=20"
+  },
+  "workspaces": [
+    "packages/tokens",
+    "packages/core"
+  ],
+  "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
+    "playwright": "1.63.0",
+    "typescript": "7.0.2"
   }
 }

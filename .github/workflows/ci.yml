@@ -1,0 +1,34 @@
+name: Validate Cave UI
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium firefox webkit
+      - run: npm test
+      - run: npm run test:types
+      - run: npm run test:browser:all
+      - run: npm run test:templates
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.6'
+          channel: stable
+          cache: true
+      - run: flutter pub get
+        working-directory: packages/flutter
+      - run: flutter analyze
+        working-directory: packages/flutter
+      - run: flutter test
+        working-directory: packages/flutter
+      - run: npm run build:flutter
+      - run: npm run test:flutter:browser

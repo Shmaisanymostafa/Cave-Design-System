@@ -1,11 +1,10 @@
-// Interface strings. The documentation bodies (guidelines, component READMEs) are the design system's own
-// English text, so they are not translated here: translating them separately would let them drift from the source.
+// Interface strings. Bilingual guidance and executable examples live in source/.
 export const LANGS = ['en', 'ar'];
 
 export const STR = {
   en: {
     siteName: 'Cave design system',
-    siteTag: 'One source for how Cave looks, reads and behaves, in English and Arabic.',
+    siteTag: 'An open-source interface foundation for Arabic and English, on Web and Flutter.',
     skip: 'Skip to content',
     menu: 'Menu',
     theme: 'Theme',
@@ -30,7 +29,7 @@ export const STR = {
     navDownloads: 'Downloads',
     home: {
       title: 'Cave design system',
-      lead: 'The rules, colours, type and components behind Cave Shops, Cave POS and cave.technology. Every product is built from the same tokens, in Light, Dark and Black, in English and Arabic.',
+      lead: 'Build Arabic and English interfaces from shared tokens and native controls. Explore working Web and Flutter examples in Light, Dark and Black.',
       cta: 'See the components',
       cta2: 'Get the tokens',
       factThemes: 'themes',
@@ -47,11 +46,11 @@ export const STR = {
       sectionsTitle: 'Where to start',
       sections: {
         colour: 'Palette, themes and the contrast of every text pair.',
-        typography: 'Hero, Poppins and Almarai, with the full type scale.',
+        typography: 'Optional Poppins and Almarai fonts, with accessible fallbacks.',
         layout: 'Spacing, radius, shadow, motion and layers.',
         components: 'Buttons, fields, tables, dialogs and more, live in every theme.',
         brand: 'The Cave logo, colours, fonts and the rules for using them. It lives on its own site.',
-        guidelines: 'The rules for the software built on the brand.',
+        guidelines: 'Language, accessibility, customization and release guidance.',
         platforms: 'How the tokens become code in web and Flutter.',
         downloads: 'tokens.css, tokens.json, Dart colours and the open fonts.',
       },
@@ -76,7 +75,7 @@ export const STR = {
     },
     type: {
       title: 'Typography',
-      lead: 'Hero for brand moments, Poppins for everything read at length, Almarai for Arabic.',
+      lead: 'Poppins for English and Almarai for Arabic, with system-font fallbacks.',
       familiesTitle: 'Families',
       scaleTitle: 'Type scale',
       scaleLead: 'Each style is shown in its own face. Arabic styles are set right to left.',
@@ -100,7 +99,7 @@ export const STR = {
     },
     components: {
       title: 'Components',
-      lead: 'Every component is CSS-only and built from the tokens. Each preview shows Light, then Dark, then Black.',
+      lead: 'Explore 15 reusable components with bilingual guidance, live web previews and native Flutter examples.',
       open: 'Open preview on its own',
       preview: 'Preview',
       guidance: 'Guidance',
@@ -128,11 +127,11 @@ export const STR = {
     },
     guidelines: {
       title: 'Product guidelines',
-      lead: 'The rules for the software built on the brand: the web console, Cave Shops mobile and Cave POS.',
+      lead: 'Language, accessibility, customization and versioned releases for any application.',
     },
     platforms: {
       title: 'Platforms',
-      lead: 'How the tokens become code in each product, so there is one source and three thin adapters.',
+      lead: 'Install the alpha packages and connect one locale and theme controller to your application.',
     },
     downloads: {
       title: 'Downloads',
@@ -143,13 +142,13 @@ export const STR = {
       tokensCss: 'tokens.css',
       tokensCssText: 'CSS variables for Light, Dark and Black. Set data-theme="light", "dark" or "black" on the root element.',
       componentsCss: 'components.css',
-      componentsCssText: 'The CSS-only components (cv-btn, cv-card, cv-table and the rest). Needs tokens.css and fonts.css.',
+      componentsCssText: 'Legacy cv- component styles for migration. New packages use cave- classes; tokens.css is required, fonts are optional.',
       fontsCss: 'fonts.css',
       fontsCssText: '@font-face rules for the bundled fonts. Bundle the font files with your app; do not load them from a CDN.',
       tokensDart: 'cave_tokens.dart',
       tokensDartText: 'The palette and one colour class per theme for Flutter.',
       fontsTitle: 'Open fonts',
-      fontsNote: 'Poppins and Almarai are open fonts (SIL OFL). Hero is licensed to Cave and is not offered here.',
+      fontsNote: 'Optional open fonts with their SIL OFL licence notices. Packages use system fallbacks until you bundle fonts.',
       logosTitle: 'Logos and brand assets',
       logosNote: 'The Cave logo, symbol, icons and patterns are not open source. They are on the brand site, with the rules for using them.',
       logosLink: 'Open the brand site',
@@ -157,7 +156,7 @@ export const STR = {
       size: 'Size',
     },
     footer: {
-      copy: (year) => `© ${year} Cave. All rights reserved.`,
+      copy: (year) => `© ${year} Cave. Packages: MIT. Brand assets have separate terms.`,
       version: (v, date) => `Design system <bdi dir="ltr">${v}</bdi>, updated <bdi dir="ltr">${date}</bdi>`,
     },
     notFound: { title: 'Page not found', text: 'That page does not exist. Try the overview.', back: 'Back to the overview' },
@@ -165,7 +164,7 @@ export const STR = {
   },
   ar: {
     siteName: 'نظام تصميم كهف',
-    siteTag: 'مرجع واحد لمظهر كهف ولغته وسلوكه، بالعربية والإنجليزية.',
+    siteTag: 'أساس مفتوح المصدر لواجهات عربية وإنجليزية على الويب وFlutter.',
     skip: 'تخطَّ إلى المحتوى',
     menu: 'القائمة',
     theme: 'المظهر',
@@ -190,7 +189,7 @@ export const STR = {
     navDownloads: 'التنزيلات',
     home: {
       title: 'نظام تصميم كهف',
-      lead: 'القواعد والألوان والخطوط والمكوّنات التي تقوم عليها متاجر كهف ونقطة مبيع كهف وموقع cave.technology. كل منتج مبني من الرموز نفسها، بالمظاهر الفاتح والداكن والأسود، وباللغتين العربية والإنجليزية.',
+      lead: 'ابنِ واجهات عربية وإنجليزية من رموز مشتركة وعناصر تحكم أصلية. استكشف أمثلة عملية للويب وFlutter بالمظاهر الفاتح والداكن والأسود.',
       cta: 'استعرض المكوّنات',
       cta2: 'حمّل الرموز',
       factThemes: 'مظاهر',
@@ -207,7 +206,7 @@ export const STR = {
       sectionsTitle: 'من أين تبدأ',
       sections: {
         colour: 'اللوحة اللونية والمظاهر وتباين كل زوج من النص والخلفية.',
-        typography: 'Hero و Poppins و Almarai مع السلّم الكامل للخطوط.',
+        typography: 'الخطوط الاختيارية Poppins وAlmarai مع بدائل النظام.',
         layout: 'المسافات والزوايا والظلال والحركة والطبقات.',
         components: 'الأزرار والحقول والجداول والنوافذ وغيرها، حيّة في كل مظهر.',
         brand: 'شعار كهف وألوانه وخطوطه وقواعد استخدامها. له موقعه الخاص.',
@@ -236,7 +235,7 @@ export const STR = {
     },
     type: {
       title: 'الخطوط',
-      lead: 'Hero للحظات الهوية، و Poppins لكل ما يُقرأ طويلًا، و Almarai للعربية.',
+      lead: 'Poppins للإنجليزية وAlmarai للعربية مع بدائل من خطوط النظام.',
       familiesTitle: 'العائلات',
       scaleTitle: 'سلّم الخطوط',
       scaleLead: 'يظهر كل نمط بخطّه. تُكتب الأنماط العربية من اليمين إلى اليسار.',
@@ -260,7 +259,7 @@ export const STR = {
     },
     components: {
       title: 'المكوّنات',
-      lead: 'كل مكوّن بـ CSS فقط ومبني من الرموز. تعرض كل معاينة المظهر الفاتح ثم الداكن ثم الأسود.',
+      lead: 'استكشف ١٥ مكوّنًا قابلًا لإعادة الاستخدام مع إرشادات باللغتين ومعاينات ويب وأمثلة Flutter أصلية.',
       open: 'افتح المعاينة في صفحة مستقلة',
       preview: 'المعاينة',
       guidance: 'الإرشادات',
@@ -288,11 +287,11 @@ export const STR = {
     },
     guidelines: {
       title: 'إرشادات المنتجات',
-      lead: 'قواعد البرمجيات المبنية على الهوية: لوحة تحكم الويب وتطبيق متاجر كهف للجوال ونقطة مبيع كهف.',
+      lead: 'اللغة وإمكانية الوصول والتخصيص والإصدارات المنظّمة لأي تطبيق.',
     },
     platforms: {
       title: 'المنصات',
-      lead: 'كيف تتحوّل الرموز إلى شيفرة في كل منتج، بمصدر واحد وثلاثة محوّلات رفيعة.',
+      lead: 'ثبّت حزم ألفا واربط اللغة والمظهر بتطبيقك من خلال متحكم واحد.',
     },
     downloads: {
       title: 'التنزيلات',
@@ -303,13 +302,13 @@ export const STR = {
       tokensCss: 'tokens.css',
       tokensCssText: 'متغيّرات CSS للمظاهر الفاتح والداكن والأسود. ضع data-theme="light" أو "dark" أو "black" على العنصر الجذر.',
       componentsCss: 'components.css',
-      componentsCssText: 'مكوّنات CSS فقط (cv-btn و cv-card و cv-table وغيرها). تحتاج إلى tokens.css و fonts.css.',
+      componentsCssText: 'أنماط cv- للتوافق أثناء الانتقال. تستخدم الحزم الجديدة أسماء cave-. ملف tokens.css مطلوب والخطوط اختيارية.',
       fontsCss: 'fonts.css',
       fontsCssText: 'قواعد @font-face للخطوط المرفقة. ضمّن ملفات الخطوط في تطبيقك ولا تحمّلها من شبكة توزيع.',
       tokensDart: 'cave_tokens.dart',
       tokensDartText: 'اللوحة اللونية وصنف ألوان لكل مظهر لـ Flutter.',
       fontsTitle: 'الخطوط المفتوحة',
-      fontsNote: 'Poppins و Almarai خطان مفتوحان (SIL OFL). أما Hero فمرخّص لكهف وغير متاح هنا.',
+      fontsNote: 'خطوط مفتوحة اختيارية مع إشعارات ترخيص SIL OFL. تستخدم الحزم بدائل النظام حتى تضمّن الخطوط.',
       logosTitle: 'الشعارات وأصول الهوية',
       logosNote: 'شعار كهف ورمزها وأيقوناتها ونقوشها ليست مفتوحة المصدر. وهي في موقع الهوية مع قواعد استخدامها.',
       logosLink: 'افتح موقع الهوية',
@@ -317,7 +316,7 @@ export const STR = {
       size: 'الحجم',
     },
     footer: {
-      copy: (year) => `© ${year} كهف. جميع الحقوق محفوظة.`,
+      copy: (year) => `© ${year} كهف. الحزم بترخيص MIT. لأصول الهوية شروط منفصلة.`,
       version: (v, date) => `نظام التصميم <bdi dir="ltr">${v}</bdi>، آخر تحديث <bdi dir="ltr">${date}</bdi>`,
     },
     notFound: { title: 'الصفحة غير موجودة', text: 'هذه الصفحة غير موجودة. جرّب النظرة العامة.', back: 'العودة إلى النظرة العامة' },

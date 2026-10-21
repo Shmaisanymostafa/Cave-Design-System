@@ -1,59 +1,30 @@
-// Builds dist/ from source/ (a snapshot of the Cave design system files). No network, no framework.
-import { readFile, writeFile, mkdir, rm, cp, readdir, stat } from 'node:fs/promises';
+// Builds packages, examples and the static site from canonical repository sources.
+import { readFile, writeFile, mkdir, rm, cp, stat } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { sections, leadAndRest } from './src/markdown.mjs';
 import { buildTokensCss, buildFontsCss, buildDart, makeResolver } from './src/tokens.mjs';
 import { renderPage, href, ORIGIN } from './src/shell.mjs';
 import { LANGS, STR } from './src/i18n.mjs';
 import * as pages from './src/pages.mjs';
+import {catalog, flutterExample} from './source/catalog.mjs';
+import {previewPage} from './src/examples.mjs';
+import {buildPackages} from './scripts/build-packages.mjs';
+import {buildExamples} from './scripts/build-examples.mjs';
+import {templates} from './source/templates.mjs';
+import {buildTemplates} from './scripts/build-templates.mjs';
+import {packPackages} from './scripts/pack-packages.mjs';
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const SRC = path.join(ROOT, 'source');
 const OUT = path.join(ROOT, 'dist');
 
-const TITLES = {
-  AddonCard: 'Add-on card', AuthCard: 'Auth card', DataTable: 'Data table', EmptyState: 'Empty state', PageHeader: 'Page header',
-  PoweredByCave: 'Powered by Cave', SectionTag: 'Section tag', StatusBadge: 'Status badge', TextField: 'Text field',
-};
-// Brand components live on the brand site; the Cover is a slide, not a component.
-const BRAND_ONLY = new Set(['Logo', 'SectionTag']);
-const OPEN_FONT_FAMILIES = ['Poppins', 'Almarai']; // SIL OFL, safe to offer
-// Hero is not in this repository (its licence is not open: all rights reserved). If source/fonts/Hero*.otf is present locally
-// it is served so this site can set its own headings; if not, the headings fall back to Poppins.
-const OPTIONAL_FONT_FAMILIES = ['Hero'];
-const GROUP_ORDER = ['Actions', 'Forms', 'Data', 'Feedback', 'Overlays', 'Navigation', 'Brand'];
+const OPEN_FONT_FAMILIES = ['Poppins', 'Almarai'];
 
 const read = (...p) => readFile(path.join(SRC, ...p), 'utf8');
 const exists = async (p) => stat(p).then(() => true, () => false);
 
-function titleOf(name) {
-  return TITLES[name] || name.replace(/([a-z])([A-Z])/g, '$1 $2');
-}
-
-// "<!-- @dsCard group="Data" height=1180 subtitle="..." -->" on the first line of each preview.
-function cardInfo(html) {
-  const m = /<!--\s*@dsCard([^>]*?)-->/.exec(html.split('\n', 1)[0]);
-  const attrs = m ? m[1] : '';
-  const group = /group="([^"]+)"/.exec(attrs)?.[1] || 'Brand';
-  const height = Number(/height=(\d+)/.exec(attrs)?.[1] || 400);
-  return { group, height };
-}
-
 async function loadComponents() {
-  const dirs = (await readdir(path.join(SRC, 'components'), { withFileTypes: true })).filter((e) => e.isDirectory()).map((e) => e.name);
-  const list = [];
-  for (const name of dirs) {
-    const readmePath = path.join(SRC, 'components', name, 'README.md');
-    if (BRAND_ONLY.has(name) || !(await exists(readmePath))) continue; // not a product component (the Cover has no README)
-    const previewHtml = await read('components', name, 'preview.html');
-    const { lead, rest } = leadAndRest(await read('components', name, 'README.md'));
-    const slugName = name.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
-    list.push({ name, slug: slugName, title: titleOf(name), lead, rest, previewHtml, ...cardInfo(previewHtml) });
-  }
-  const rank = (g) => (GROUP_ORDER.includes(g) ? GROUP_ORDER.indexOf(g) : GROUP_ORDER.length);
-  list.sort((a, b) => rank(a.group) - rank(b.group) || a.title.localeCompare(b.title));
-  return list;
+  return catalog.map(c => ({...c, titles:c.title, leads:c.lead, title:c.title.en, lead:c.lead.en, rest:c.guidance.en, height:300}));
 }
 
 async function writeOut(rel, data) {
@@ -69,19 +40,16 @@ function routeFile(lang, route) {
 }
 
 export async function build() {
+  const release = await buildPackages();
+  await buildExamples();
+  const artifacts = await packPackages();
   await rm(OUT, { recursive: true, force: true });
   const tokens = JSON.parse(await read('tokens.json'));
-  const readmeText = await read('README.md');
-  const readme = sections(readmeText);
-  const platformMapping = await read('Platform-mapping.md');
   const metaRaw = JSON.parse(await read('meta.json'));
   const components = await loadComponents();
   const resolver = makeResolver(tokens);
 
-  const meta = {
-    version: /v(\d+)/i.exec(metaRaw.lastChange?.note || '')?.[0]?.toLowerCase() || 'v1',
-    date: (metaRaw.lastChange?.at || '').slice(0, 10),
-  };
+  const meta = {version: release.version, date:metaRaw.date};
 
   // Generated assets
   const tokensCss = buildTokensCss(tokens);
@@ -89,28 +57,39 @@ export async function build() {
   for (const f of tokens.type.fonts) if (await exists(path.join(SRC, f.file))) present.push(f);
   const presentTokens = { ...tokens, type: { ...tokens.type, fonts: present } };
   const fontsCss = buildFontsCss(presentTokens, { families: OPEN_FONT_FAMILIES });
-  const fontsCave = buildFontsCss(presentTokens, { families: [...OPEN_FONT_FAMILIES, ...OPTIONAL_FONT_FAMILIES] });
   const dart = buildDart(tokens);
-  const componentsCss = await read('components', 'bundle.css');
+  const componentsCss = await readFile(path.join(ROOT,'packages/core/dist/legacy.css'),'utf8');
   await writeOut('assets/tokens.css', tokensCss);
   await writeOut('assets/fonts.css', fontsCss);
-  await writeOut('assets/fonts-cave.css', fontsCave);
+  await writeOut('assets/fonts-cave.css', fontsCss);
   await writeOut('assets/components.css', componentsCss);
   await writeOut('assets/cave_tokens.dart', dart);
   await writeOut('assets/tokens.json', JSON.stringify(tokens, null, 1));
   await cp(path.join(ROOT, 'site', 'site.css'), path.join(OUT, 'assets', 'site.css'));
   await cp(path.join(ROOT, 'site', 'site.js'), path.join(OUT, 'assets', 'site.js'));
-  // Fonts: the open ones are offered for download; Hero is served only so this site can set its own headings.
-  const servedFonts = present.filter((f) => [...OPEN_FONT_FAMILIES, ...OPTIONAL_FONT_FAMILIES].includes(f.family));
+  for(const file of ['catalog.mjs','templates.mjs','playground.mjs'])await cp(path.join(SRC,file),path.join(OUT,'assets',file));
+  for(const file of ['preview.js','playground.js'])await cp(path.join(ROOT,'site',file),path.join(OUT,'assets',file));
+  if(await exists(path.join(ROOT,'.artifacts/flutter-preview/index.html')))await cp(path.join(ROOT,'.artifacts/flutter-preview'),path.join(OUT,'flutter-preview'),{recursive:true});
+  await cp(path.join(ROOT,'packages/core/dist'),path.join(OUT,'assets/core'),{recursive:true});
+  await mkdir(path.join(OUT,'downloads'),{recursive:true});
+  for (const artifact of artifacts) await cp(path.join(ROOT,'.artifacts',artifact.file),path.join(OUT,'downloads',artifact.file));
+  await writeOut('downloads/LICENSE.txt',await readFile(path.join(ROOT,'packages/LICENSE'),'utf8'));
+  for (const family of ['poppins','almarai']) await writeOut(`assets/fonts/${family}-OFL.txt`,await read('fonts',`${family}-OFL.txt`));
+  // Only open fonts with their licence notices are served.
+  const servedFonts = present.filter((f) => OPEN_FONT_FAMILIES.includes(f.family));
   for (const f of servedFonts) await cp(path.join(SRC, f.file), path.join(OUT, 'assets', f.file));
   for (const f of ['cave-symbol-color.svg', 'cave-symbol-white.svg']) await cp(path.join(SRC, 'logos', f), path.join(OUT, 'assets', 'logos', f));
 
-  // Component previews: the preview files as they are, with the tokens, fonts and components linked in.
-  const links = '<link rel="stylesheet" href="/assets/fonts-cave.css"><link rel="stylesheet" href="/assets/tokens.css"><link rel="stylesheet" href="/assets/components.css">';
-  for (const c of components) {
-    const html = c.previewHtml.replace(/<head>/i, `<head>${links}`);
-    await writeOut(`previews/${c.name}.html`, html);
+  // Both preview languages and Flutter source come from the same executable examples.
+  for (const c of catalog) {
+    for (const lang of LANGS) {
+      await writeOut(`previews/${lang}/${c.name}.html`,previewPage(c,lang));
+      await writeOut(`examples/flutter/${c.slug}_${lang}.dart`,flutterExample(c,lang));
+    }
+    await writeOut(`previews/${c.name}.html`,previewPage(c,'en'));
   }
+
+  await buildTemplates(ROOT,OUT);
 
   const sizeOf = async (rel) => (await stat(path.join(OUT, rel))).size;
   const fontFiles = [];
@@ -121,8 +100,7 @@ export async function build() {
 
   const data = {
     tokens,
-    readme,
-    platformMapping,
+    version: release.version,
     components,
     resolver,
     fonts: fontFiles,
@@ -143,27 +121,37 @@ export async function build() {
   const ctx = { components, meta, withRoute(route) { return { ...this, route }; } };
 
   const routes = [
+    {route:'/templates',title:l=>l==='ar'?'القوالب':'Templates',body:pages.templatesPage},
+    {route:'/customization',title:l=>l==='ar'?'التخصيص':'Customization',body:pages.customizationPage},
     { route: '/', title: (l) => STR[l].siteName, body: pages.homePage, desc: (l) => STR[l].home.lead },
     { route: '/foundations/colour', title: (l) => STR[l].colour.title, body: pages.colourPage, desc: (l) => STR[l].colour.lead },
     { route: '/foundations/typography', title: (l) => STR[l].type.title, body: pages.typographyPage, desc: (l) => STR[l].type.lead },
     { route: '/foundations/layout', title: (l) => STR[l].layout.title, body: pages.layoutPage, desc: (l) => STR[l].layout.lead },
     { route: '/components', title: (l) => STR[l].components.title, body: pages.componentsIndexPage, desc: (l) => STR[l].components.lead },
     { route: '/guidelines', title: (l) => STR[l].guidelines.title, body: pages.guidelinesPage, desc: (l) => STR[l].guidelines.lead },
-    { route: '/platforms', title: (l) => STR[l].platforms.title, body: pages.platformsPage, desc: (l) => STR[l].platforms.lead, noindex: true },
+    { route: '/platforms', title: (l) => STR[l].platforms.title, body: pages.platformsPage, desc: (l) => STR[l].platforms.lead },
     { route: '/downloads', title: (l) => STR[l].downloads.title, body: pages.downloadsPage, desc: (l) => STR[l].downloads.lead },
   ];
 
   const indexable = [];
   for (const lang of LANGS) {
+    const localized = components.map(c=>({...c,title:c.titles[lang],lead:c.leads[lang],rest:c.guidance[lang]}));
+    const localizedData = {...data,components:localized};
+    const localizedCtx = {...ctx,components:localized};
     for (const r of routes) {
-      const html = renderPage({ lang, route: r.route, title: r.title(lang), description: r.desc(lang), body: r.body(lang, data), noindex: r.noindex }, ctx);
+      const html = renderPage({ lang, route: r.route, title: r.title(lang), description: r.desc?.(lang), body: r.body(lang, localizedData), noindex: r.noindex }, localizedCtx);
       await writeOut(routeFile(lang, r.route), html);
       if (!r.noindex) indexable.push(href(lang, r.route));
     }
+    for(const template of templates){
+      const route='/templates/'+template.slug;
+      await writeOut(routeFile(lang,route),renderPage({lang,route,title:template.title[lang],description:template.lead[lang],body:pages.templatePage(lang,template)},localizedCtx));
+      indexable.push(href(lang,route));
+    }
     for (let i = 0; i < components.length; i += 1) {
-      const c = components[i];
+      const c = localized[i];
       const route = `/components/${c.slug}`;
-      const html = renderPage({ lang, route, title: c.title, description: c.lead.replace(/[`*_]/g, ''), body: pages.componentPage(lang, data, c, i) }, ctx);
+      const html = renderPage({ lang, route, title: c.title, description: c.lead.replace(/[`*_]/g, ''), body: pages.componentPage(lang, localizedData, c, i) }, localizedCtx);
       await writeOut(routeFile(lang, route), html);
       indexable.push(href(lang, route));
     }

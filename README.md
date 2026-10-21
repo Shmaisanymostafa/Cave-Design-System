@@ -1,44 +1,102 @@
-# design.cave.technology
+# Cave UI and design.cave.technology
 
-The public website of the Cave design system. A static site generated from the design system's own files, so the site cannot drift from the system: it shows what is in `source/`, nothing else.
+A UI foundation prepared for open-source use for Arabic and English on Web and Flutter. This
+repository owns the source, packages and bilingual documentation. The brand site
+is maintained separately at https://brand.cave.technology.
 
-English at `/`, Arabic (right to left) at `/ar/`. Light, Dark, Black and System themes.
+## Workspace
 
-## Scope: code and docs only
+- `source/tokens.json`: canonical palette, themes, typography and layout tokens.
+- `source/catalog.mjs`: 15 components with bilingual guidance and executable HTML/JS/Dart examples.
+- `source/guidance.mjs`, `source/messages.json`: bilingual guidance and built-in UI labels.
+- `source/components/core.css`: reusable web styles using logical properties.
+- `packages/tokens`: `@cave-ui/tokens`; CSS, typed JavaScript/JSON and DTCG subset exports.
+- `packages/core`: `@cave-ui/core`; zero external runtime dependencies.
+- `packages/flutter`: `cave_ui`; native SDK widgets, themes and localization integration.
+- `src/`, `site/`: static documentation generation and browser controls.
+- `source/legacy/` and the older component preview folders: historical references, not package inputs.
 
-This site is the open-source design system. Brand assets (logo, symbol, icons, patterns, the Hero font) are not open source and live on the separate brand site, https://brand.cave.technology (`../brand.cave.technology`). Only the symbol appears here, as a "built by Cave" credit. The build leaves the brand-only components (Logo, Section tag) out, offers only the open fonts (Poppins, Almarai, SIL OFL) for download, and a test fails if a logo, icon, pattern or non-open font reaches `dist/`. Hero is served only so this site can set its own headings.
+Git is the authoritative source. Do not overwrite this repository from an AI
+artifact. Generated package outputs are reproducible; edit the sources and rebuild.
+No changes to Cave Shops, POS, the mobile app or the company website are required.
 
-**Fonts in this repository.** Poppins and Almarai (SIL OFL) are committed. Hero and Blue Ocean are not: the font files say "All rights reserved" and carry no licence. They are git-ignored; copy `Hero.otf` and `Hero-Light.otf` into `source/fonts/` locally to get Hero headings, otherwise the site falls back to Poppins and the build still passes.
+## Build and validate
 
-Follow-up before the packages are published: the Cave-specific patterns (Auth card, Add-on card, Footer, Powered by Cave) and the Cave product rules in the guidelines page should be separated from the core components.
+Requires Node 20+ and Flutter 3.35+ (validated with Flutter 3.47.6).
 
-## How it works
-
-- `source/` is a snapshot of the Cave design system artifact (claude.ai/artifact/SSNhnZjFs1D45nxEVbvTNE): `tokens.json`, `README.md`, `Platform-mapping.md`, `components/` (bundle.css, each component's README and preview), `fonts/`, `logos/`, `icons/`, and `meta.json` (version and last change).
-- `build.mjs` reads it and writes `dist/`: `tokens.css` (Light, Dark, Black), `fonts.css`, `components.css`, `cave_tokens.dart`, a page per foundation, brand, guidelines, platforms and downloads, and a page per component with its live preview in an iframe.
-- The colour page measures contrast from the tokens at build time. `npm test` checks it against the figures in the README (5.6:1 white on lagoon, 4.55:1 navy on teal, 5.1:1 charcoal on teal), that every text pair passes, that every page exists in both languages, and that every internal link resolves.
-- The interface (menus, titles, table headings) is translated in `src/i18n.mjs`. The detailed guidance (README sections, component READMEs) is the design system's English text, shown as is and marked in Arabic pages: translating it here would let it drift from the source.
-- `Platform-mapping` is built but marked `noindex` and left out of the sitemap.
-
-## Commands
-
-```
-npm install
-npm run build      # source/ -> dist/
-npm run dev        # build, then serve dist/ on http://localhost:4173
+```sh
+npm ci
 npm test
+npm run test:types
+npm run build
+npx playwright install chromium
+npm run test:browser
+cd packages/flutter
+flutter pub get
+flutter analyze
+flutter test
 ```
 
-## Updating from the design system
+`npm run build` generates packages, bilingual examples, downloadable archives and
+`dist/`. `npm run build:packages` updates packages only. `npm run pack:packages`
+packages already-built output. `npm run serve` serves the generated site.
 
-The design system lives in a claude.ai artifact, so the snapshot is refreshed by reading its files again: copy `project/tokens.json`, `README.md`, `Platform-mapping.md`, `components/**`, `fonts/*`, the logo and icon SVGs into `source/` (logos and icons come from the artifact's asset store; their names are in its `design-system.json`), set `meta.json` from `lastChange`, then `npm run build && npm test`. Ask Claude to "sync the design site" and it does these steps.
+The browser checks run against local servers. If the sibling brand checkout is
+present, they also verify clicking whole theme labels in English and Arabic.
+Set `CAVE_BROWSER_PATH` only when using a non-default Chromium executable.
 
-## Deploying (Firebase Hosting)
+## Documentation behaviour
 
-The Firebase project is `cave-design-system` (Hosting site `cave-design-system`, default URL https://cave-design-system.web.app); `.firebaserc` points at it. It belongs to the shmaisanimostafa@gmail.com Google account, so pass that account (the CLI's default may be another one):
+The navbar separates documentation language, Web/Flutter and appearance. The
+platform is shareable through `?platform=flutter` and preserved across navigation.
+The preview language is independent of the documentation language. Theme changes
+update previews. Flutter panels supply compiled/tested Dart source; the on-demand preview runs actual Flutter Web widgets.
 
-1. `npm run build`
-2. `firebase deploy --only hosting --account shmaisanimostafa@gmail.com`
-3. In the Hosting console add the custom domain `design.cave.technology` and the DNS records it shows.
+## Releases and installation
 
-`firebase.json` serves `dist/` with clean URLs, no-cache HTML, short asset caching, `noindex` on `/previews/`, and the same security headers as the other Cave sites.
+Version `0.1.0-alpha.1` is distributed as downloadable archives at `/downloads`.
+It is not published to npm or pub.dev. Registry names must be reserved and account
+ownership confirmed before registry publication. The Flutter package deliberately
+uses `publish_to: none` until that release step. See each package README for local
+archive installation and `CHANGELOG.md` for compatibility notes.
+
+CI builds and tests both platforms; it does not publish packages, upload release artifacts or deploy hosting. See `CONTRIBUTING.md`.
+
+## Licensing and brand separation
+
+Package code and generated design tokens are MIT licensed; each archive includes
+its licence. Poppins and Almarai are optional downloads under their included SIL
+OFL notices. No fonts are loaded from a network by the UI packages. Cave logos,
+icons, patterns and proprietary fonts are excluded from packages. The site uses
+Cave's symbol for its own identity; that asset retains separate brand terms.
+Hero and Blue Ocean are not served by this design site. The brand site maintains
+its own typography and assets.
+
+## Deployment (paused by owner)
+
+Current work is local and unreleased. Do not deploy without a new explicit instruction.
+
+## Hosting reference
+
+Firebase project and hosting site: `cave-design-system`. Build and pass checks, then:
+
+```sh
+firebase deploy --only hosting --project cave-design-system --account shmaisanimostafa@gmail.com
+```
+
+The existing custom domain is https://design.cave.technology. Only `dist/` is hosted.
+
+## Unreleased playground and templates
+
+See [status](docs/STATUS.md), [compatibility](docs/COMPATIBILITY.md),
+[migration notes](docs/MIGRATION.md) and [accessibility coverage](docs/ACCESSIBILITY.md).
+The `/templates` pages include settings, dashboard and sign-in examples with Web
+ZIPs and complete Flutter source. Templates have no backend connections.
+
+`npm run build:flutter` compiles the actual Flutter gallery locally, including
+bundled open fonts and rendering resources. `npm run test:browser:all` checks the
+three browser engines and writes local visual review pages. Run
+`node tests/flutter-browser.mjs` after building the gallery.
+
+New npm publication is blocked with `private: true`; Flutter remains
+`publish_to: none`. No package versions or release tags are changed by this work.

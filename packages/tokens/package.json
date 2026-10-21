@@ -1,0 +1,29 @@
+{
+  "name": "@cave-ui/tokens",
+  "version": "0.1.0-alpha.1",
+  "description": "Shared design tokens for Arabic and English interfaces.",
+  "type": "module",
+  "license": "MIT",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./styles.css": "./dist/styles.css",
+    "./tokens.json": "./dist/tokens.json",
+    "./dtcg/*.json": "./dist/dtcg/*.json"
+  },
+  "homepage": "https://design.cave.technology/platforms",
+  "engines": {
+    "node": ">=20"
+  },
+  "private": true
+}

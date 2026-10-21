@@ -1,0 +1,20 @@
+import {esc} from './markdown.mjs';
+export function playground(component,lang,{template=false}={}) {
+ const ar=lang==='ar';
+ const select=(id,label,options)=>`<label class="play-control" for="preview-${id}"><span>${label}</span><select class="cv-input" id="preview-${id}" disabled>${options.map(([v,l])=>`<option value="${v}"${id==='language'&&v===lang?' selected':''}>${l}</option>`).join('')}</select></label>`;
+ return `<section id="preview" data-playground="${component.name}"${template?' data-template="true"':''}>
+<h2>${ar?'المعاينة التفاعلية':'Interactive preview'}</h2><div class="play-controls">
+${select('language',ar?'لغة المعاينة':'Preview language',[['en','English'],['ar','العربية']])}
+${select('theme',ar?'مظهر المعاينة':'Preview theme',[['light',ar?'فاتح':'Light'],['dark',ar?'داكن':'Dark'],['black',ar?'أسود':'Black']])}
+${select('direction',ar?'الاتجاه':'Direction',[['auto',ar?'تلقائي':'Automatic'],['ltr','LTR'],['rtl','RTL']])}
+${select('numerals',ar?'الأرقام':'Digits',[['auto',ar?'تلقائي':'Automatic'],['latn','0123'],['arab','٠١٢٣']])}
+${component.name==='Button'?select('variant',ar?'المتغير':'Variant',[['primary',ar?'أساسي':'Primary'],['secondary',ar?'ثانوي':'Secondary'],['tertiary',ar?'منخفض البروز':'Tertiary'],['danger',ar?'تحذيري':'Danger']])+select('size',ar?'الحجم':'Size',[['md',ar?'متوسط':'Medium'],['sm',ar?'صغير':'Small'],['lg',ar?'كبير':'Large']])+select('label',ar?'طول النص':'Label length',[['normal',ar?'عادي':'Normal'],['long',ar?'طويل':'Long']]):''}
+${['Button','TextField'].includes(component.name)?select('state',ar?'الحالة':'State',[['default',ar?'عادية':'Default'],['disabled',ar?'معطّلة':'Disabled'],[component.name==='Button'?'loading':'error',component.name==='Button'?(ar?'تحميل':'Loading'):(ar?'خطأ':'Error')]]):''}
+</div>
+<div data-platform="web"><iframe class="preview" data-component="${component.name}" src="/previews/${lang}/${component.name}.html" title="${esc(component.title[lang])}" height="${template?700:300}"></iframe><p><a class="preview-open" href="/previews/${lang}/${component.name}.html" target="_blank" rel="noopener">${ar?'فتح مثال الويب':'Open web example'}</a></p></div>
+<div data-platform="flutter" hidden><p>${ar?'شغّل معاينة Flutter الفعلية عند الحاجة. قد يستغرق التحميل الأول لحظات.':'Load the actual Flutter preview when needed. The first load may take a moment.'}</p><button type="button" id="load-flutter" class="cv-btn cv-btn--secondary" disabled>${ar?'تحميل معاينة Flutter':'Load Flutter preview'}</button><p id="flutter-status" role="status"></p><div id="flutter-preview"></div></div>
+<div class="play-actions"><button id="share-playground" class="cv-btn cv-btn--secondary" disabled>${ar?'نسخ رابط الإعدادات':'Copy configured link'}</button><button id="reset-playground" class="cv-btn cv-btn--secondary" disabled>${ar?'إعادة الضبط':'Reset preview'}</button><span id="playground-status" role="status"></span></div>
+<p class="sec-lead">${ar?'تغيّر اللغة الاتجاه والرسائل المدمجة والتنسيق. يوفّر التطبيق ترجمة محتواه. اعزل البريد والهاتف والمعرّفات عن اتجاه الفقرة.':'Locale updates direction, built-in messages and formatting. Applications provide their content translations. Isolate emails, phone numbers and identifiers from paragraph direction.'}</p>
+</section><section id="code"><h2>${ar?'الشيفرة حسب الإعدادات':'Configured code'}</h2>${['web','flutter'].map(platform=>`<div data-platform="${platform}"${platform==='flutter'?' hidden':''}>${(platform==='web'?['html','javascript']:['dart']).map(type=>`<div class="code-example"><button class="cv-btn cv-btn--secondary copy-code" disabled data-copy-label="${ar?'نسخ الشيفرة':'Copy code'}" data-copied-label="${ar?'تم النسخ':'Copied'}">${ar?'نسخ الشيفرة':'Copy code'}</button><pre dir="ltr"><code data-code="${type}"></code></pre><span class="copy-status sr-only" role="status"></span></div>`).join('')}</div>`).join('')}<noscript>${ar?'فعّل JavaScript لاستخدام المعاينة والشيفرة التفاعلية.':'Enable JavaScript for configurable previews and code.'}</noscript></section>
+<script type="module" src="/assets/playground.js"></script>`;
+}

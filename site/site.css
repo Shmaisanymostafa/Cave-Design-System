@@ -174,3 +174,39 @@ html[lang="ar"] .group-title{letter-spacing:0;text-transform:none;font-family:va
   .brand span{display:none}
 }
 @media print{.top,.side,.site-footer{display:none}.frame{display:block}}
+
+/* Site identity stays outside the reusable package. */
+/* Footer: a product's page footer. Its own logo, Powered by Cave, the copyright line, a row of links. */
+.cv-footer{border-block-start:1px solid var(--border);background:var(--surface-raised);color:var(--ink-muted)}
+.cv-footer__stack{display:flex;flex-direction:column;align-items:center;padding:36px var(--space-3) var(--space-32);text-align:center}
+.cv-footer__logo{display:block;height:40px;width:auto;object-fit:contain}
+.cv-footer .cv-powered{margin-block-start:10px}
+.cv-footer__copy{margin:var(--space-3) 0 0;font:400 14px/20px var(--ui-font)}
+.cv-footer__links{display:flex;flex-wrap:wrap;justify-content:center;gap:5px var(--space-4);margin:14px 0 0;padding:0;list-style:none}
+.cv-footer__links a{display:inline-block;padding-block:3px;color:var(--ink-muted);font:500 13px/20px var(--ui-font);text-decoration:none}
+.cv-footer__links a:hover{color:var(--accent-text);text-decoration:underline}
+
+/* Platform documentation and code examples. */
+:root[data-platform="web"] [data-platform="flutter"],:root[data-platform="flutter"] [data-platform="web"]{display:none}
+:root[data-platform="flutter"] [data-platform="flutter"]{display:block}
+.preview-toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-block-end:16px}
+.preview-toolbar h2{margin:0;margin-inline-end:auto}
+.preview-toolbar select{width:auto;max-width:140px}
+.code-example{position:relative}
+.code-example pre{padding-block-start:56px;max-height:620px}
+.copy-code{position:absolute;inset-block-start:10px;inset-inline-end:10px;z-index:1;background:var(--surface)}
+.top__ctl{flex-wrap:wrap}
+.side{inset-block-start:var(--header-height,64px);max-height:calc(100vh - var(--header-height,64px))}
+.page h2,.page h3{scroll-margin-block-start:calc(var(--header-height,64px) + 16px)}
+.cards,.principles,.fam{grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr))}
+@media(max-width:760px){.top__in{flex-wrap:wrap}.top__ctl{flex:1 1 auto;justify-content:flex-end}.top__ctl select{max-width:100px}}
+@media(max-width:400px){.top__space{display:none}.top__ctl{gap:6px}.top__ctl .cv-input,.lang,.menu-btn{min-height:40px}.top__ctl{justify-content:flex-start;width:100%}.brand span{display:inline}}
+
+.play-controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:16px;margin-block:20px}
+.play-control{display:grid;gap:6px;font-size:13px;min-width:0}.play-control select{width:100%;min-height:44px}
+.play-actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-block:20px}
+.flutter-preview{display:block;width:100%;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--surface);margin-block:16px}
+[hidden]{display:none!important}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+
+pre:focus-visible{outline:2px solid var(--focus-ring);outline-offset:3px}

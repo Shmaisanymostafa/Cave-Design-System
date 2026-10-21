@@ -1,0 +1,29 @@
+{
+  "name": "@cave-ui/core",
+  "version": "0.1.0-alpha.1",
+  "description": "Dependency-free web components, locale and theme utilities.",
+  "type": "module",
+  "license": "MIT",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./styles.css": "./dist/styles.css",
+    "./tokens.css": "./dist/tokens.css",
+    "./legacy.css": "./dist/legacy.css"
+  },
+  "homepage": "https://design.cave.technology/platforms",
+  "engines": {
+    "node": ">=20"
+  },
+  "private": true
+}

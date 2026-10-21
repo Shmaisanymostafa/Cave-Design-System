@@ -1,7 +1,12 @@
+import {customCss,customDart} from '../source/customization.mjs';
+import {playground} from './playground.mjs';
+import {templates} from '../source/templates.mjs';
 // Page bodies. Each takes the language and the loaded design system data and returns HTML.
 import { esc, md, inline, sections, leadAndRest } from './markdown.mjs';
 import { STR } from './i18n.mjs';
 import { href } from './shell.mjs';
+import {guidance} from '../source/guidance.mjs';
+import {codeExamples,installContent} from './examples.mjs';
 import { THEMES, splitColours, CONTRAST_PAIRS } from './tokens.mjs';
 
 const head = (lang, eyebrow, title, lead) => `<header>
@@ -10,18 +15,10 @@ const head = (lang, eyebrow, title, lead) => `<header>
 ${lead ? `<p class="lead">${esc(lead)}</p>` : ''}
 </header>`;
 
-// Detailed guidance stays in the design system's English. Mark it so it reads left to right inside an Arabic page.
-function docBlock(lang, html, wide = false) {
-  const cls = `doc${wide ? ' doc--wide' : ''}${lang === 'ar' ? ' doc--en' : ''}`;
-  const attrs = lang === 'ar' ? ' lang="en" dir="ltr"' : '';
-  return `<div class="${cls}"${attrs}>${html}</div>`;
-}
+function docBlock(lang,html,wide=false) {return `<div class="doc${wide?' doc--wide':''}" lang="${lang}" dir="${lang==='ar'?'rtl':'ltr'}">${html}</div>`;}
+const englishNote = () => '';
 
-function englishNote(lang) {
-  if (lang !== 'ar') return '';
-  return `<div class="cv-banner note"><svg class="cv-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5v.01"/></svg><div class="cv-banner__text">${esc(STR.ar.bodyEnglishNote)}</div></div>`;
-}
-
+const usage = (token,lang) => lang === 'ar' ? token.usageAr || '' : token.usage || '';
 const themeLabel = (lang, th) => STR[lang][`theme${th[0].toUpperCase()}${th.slice(1)}`];
 
 export function homePage(lang, d) {
@@ -61,7 +58,7 @@ export function colourPage(lang, d) {
   const { raw, semantic } = splitColours(d.tokens);
   const r = d.resolver;
   const swatches = raw
-    .map((c) => `<li class="sw"><div class="sw__chip" style="background:${esc(c.value)}"></div><div class="sw__txt"><b>${esc(c.name)}</b><code>${esc(c.value)}</code><small>${inline(c.usage || '')}</small></div></li>`)
+    .map((c) => `<li class="sw"><div class="sw__chip" style="background:${esc(c.value)}"></div><div class="sw__txt"><b>${esc(c.name)}</b><code>${esc(c.value)}</code><small>${inline(usage(c,lang))}</small></div></li>`)
     .join('');
   const th = THEMES.map((x) => `<th>${esc(themeLabel(lang, x))}</th>`).join('');
   const semRows = semantic
@@ -70,7 +67,7 @@ export function colourPage(lang, d) {
         const hex = r.hex(x, c.name);
         return `<td><span class="dot" style="background:${hex}" title="${esc(c.value[x])}"></span> <code>${hex}</code></td>`;
       }).join('');
-      return `<tr><td><code>${esc(c.name)}</code></td>${cells}<td class="use">${inline(c.usage || '')}</td></tr>`;
+      return `<tr><td><code>${esc(c.name)}</code></td>${cells}<td class="use">${inline(usage(c,lang))}</td></tr>`;
     })
     .join('');
   const pairRows = CONTRAST_PAIRS.map((p) => {
@@ -87,7 +84,7 @@ export function colourPage(lang, d) {
 <div class="tcard"><div class="tscroll"><table class="tbl"><thead><tr><th>${esc(t.token)}</th>${th}<th>${esc(t.usage)}</th></tr></thead><tbody>${semRows}</tbody></table></div></div></section>
 <section id="contrast"><h2>${esc(t.contrastTitle)}</h2><p class="sec-lead">${esc(t.contrastLead)}</p>
 <div class="tcard"><div class="tscroll"><table class="tbl"><thead><tr><th>${esc(t.pair)}</th>${th}</tr></thead><tbody>${pairRows}</tbody></table></div></div></section>
-<section id="guidance"><h2>${esc(t.guidanceTitle)}</h2>${englishNote(lang)}${docBlock(lang, md(d.readme.map.get('Colour')))}</section>`;
+<section id="guidance"><h2>${esc(t.guidanceTitle)}</h2>${englishNote(lang)}${docBlock(lang, md(guidance[lang].colour))}</section>`;
 }
 
 const ALPHABET = {
@@ -96,7 +93,7 @@ const ALPHABET = {
   'ar-display': 'أ ب ت ث ج ح خ د ذ ر ز ٠١٢٣٤٥٦٧٨٩',
   'ar-text': 'أ ب ت ث ج ح خ د ذ ر ز ٠١٢٣٤٥٦٧٨٩',
 };
-const FAMILY_NAME = { display: 'Hero', sans: 'Poppins', 'ar-display': 'Almarai Light', 'ar-text': 'Almarai' };
+const FAMILY_NAME = { display: 'Poppins', sans: 'Poppins', 'ar-display': 'Almarai Light', 'ar-text': 'Almarai' };
 
 export function typographyPage(lang, d) {
   const t = STR[lang].type;
@@ -112,16 +109,16 @@ export function typographyPage(lang, d) {
       const rows = g.styles
         .map((s) => {
           const style = `font-family:var(--font-${g.family});font-size:${s.fontSize};line-height:${s.lineHeight};font-weight:${s.fontWeight};${s.letterSpacing ? `letter-spacing:${s.letterSpacing};` : ''}`;
-          return `<div class="spec"><div class="spec__meta"><b>${esc(s.name)}</b><span>${esc(t.size)} ${esc(s.fontSize)}</span><span>${esc(t.line)} ${esc(s.lineHeight)}</span><span>${esc(t.weight)} ${esc(s.fontWeight)}</span></div><p class="spec__sample" style="${style}"${rtl ? ' dir="rtl" lang="ar"' : ''}>${esc(s.sample)}</p><p class="spec__use">${inline(s.usage || '')}</p></div>`;
+          return `<div class="spec"><div class="spec__meta"><b>${esc(s.name)}</b><span>${esc(t.size)} ${esc(s.fontSize)}</span><span>${esc(t.line)} ${esc(s.lineHeight)}</span><span>${esc(t.weight)} ${esc(s.fontWeight)}</span></div><p class="spec__sample" style="${style}"${rtl ? ' dir="rtl" lang="ar"' : ''}>${esc(s.sample)}</p><p class="spec__use">${inline(usage(s,lang))}</p></div>`;
         })
         .join('');
-      return `<h3>${esc(g.name)}</h3><div class="tcard" style="padding:0 var(--space-3)">${rows}</div>`;
+      return `<h3>${esc(lang === 'ar' ? g.nameAr : g.name)}</h3><div class="tcard" style="padding:0 var(--space-3)">${rows}</div>`;
     })
     .join('');
   return `${head(lang, STR[lang].navFoundations, t.title, t.lead)}
 <section id="families"><h2>${esc(t.familiesTitle)}</h2><div class="fam">${fam}</div></section>
 <section id="scale"><h2>${esc(t.scaleTitle)}</h2><p class="sec-lead">${esc(t.scaleLead)}</p>${groups}</section>
-<section id="guidance"><h2>${esc(t.guidanceTitle)}</h2>${englishNote(lang)}${docBlock(lang, md(d.readme.map.get('Typography')))}</section>`;
+<section id="guidance"><h2>${esc(t.guidanceTitle)}</h2>${englishNote(lang)}${docBlock(lang, md(guidance[lang].typography))}</section>`;
 }
 
 export function layoutPage(lang, d) {
@@ -130,20 +127,20 @@ export function layoutPage(lang, d) {
   const table = (cols, rows) => `<div class="tcard"><div class="tscroll"><table class="tbl"><thead><tr>${cols.map((c) => `<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table></div></div>`;
   const spacing = table(
     [t.token, t.value, '', t.usage],
-    tk.spacing.tokens.map((s) => `<tr><td><code>${esc(s.name)}</code></td><td class="num">${esc(s.value)}</td><td style="width:50%"><span class="bar" style="width:${esc(s.value)}"></span></td><td class="use">${inline(s.usage || '')}</td></tr>`).join(''),
+    tk.spacing.tokens.map((s) => `<tr><td><code>${esc(s.name)}</code></td><td class="num">${esc(s.value)}</td><td style="width:50%"><span class="bar" style="width:${esc(s.value)}"></span></td><td class="use">${inline(usage(s,lang))}</td></tr>`).join(''),
   );
   const radius = table(
     [t.token, t.value, '', t.usage],
-    tk.radius.tokens.map((s) => `<tr><td><code>${esc(s.name)}</code></td><td class="num">${esc(s.value)}</td><td><div class="rbox" style="border-radius:${esc(s.value)}"></div></td><td class="use">${inline(s.usage || '')}</td></tr>`).join(''),
+    tk.radius.tokens.map((s) => `<tr><td><code>${esc(s.name)}</code></td><td class="num">${esc(s.value)}</td><td><div class="rbox" style="border-radius:${esc(s.value)}"></div></td><td class="use">${inline(usage(s,lang))}</td></tr>`).join(''),
   );
   const shadow = table(
     [t.token, '', t.usage],
-    tk.shadow.tokens.map((s) => `<tr><td><code>${esc(s.name)}</code></td><td><div class="sbox" style="box-shadow:var(--${esc(s.name)})"></div></td><td class="use">${inline(s.usage || '')}</td></tr>`).join(''),
+    tk.shadow.tokens.map((s) => `<tr><td><code>${esc(s.name)}</code></td><td><div class="sbox" style="box-shadow:var(--${esc(s.name)})"></div></td><td class="use">${inline(usage(s,lang))}</td></tr>`).join(''),
   );
   const motion = table(
     [t.token, t.value, t.usage],
     [...tk.duration.tokens, ...tk.easing.tokens, ...tk.zIndex.tokens]
-      .map((s) => `<tr><td><code>${esc(s.name)}</code></td><td class="num"><code>${esc(s.value)}</code></td><td class="use">${inline(s.usage || '')}</td></tr>`)
+      .map((s) => `<tr><td><code>${esc(s.name)}</code></td><td class="num"><code>${esc(s.value)}</code></td><td class="use">${inline(usage(s,lang))}</td></tr>`)
       .join(''),
   );
   const notes = [tk.spacing.note, tk.radius.note, tk.shadow.note, tk.duration.note].filter(Boolean).map((n) => `- ${n}`).join('\n');
@@ -152,7 +149,7 @@ export function layoutPage(lang, d) {
 <section id="radius"><h2>${esc(t.radiusTitle)}</h2>${radius}</section>
 <section id="shadow"><h2>${esc(t.shadowTitle)}</h2>${shadow}</section>
 <section id="motion"><h2>${esc(t.motionTitle)}</h2>${motion}</section>
-<section id="guidance"><h2>${esc(t.guidanceTitle)}</h2>${englishNote(lang)}${docBlock(lang, md(d.readme.map.get('Shape, layers and pattern') + '\n\n' + notes))}</section>`;
+<section id="guidance"><h2>${esc(t.guidanceTitle)}</h2>${englishNote(lang)}${docBlock(lang, md(guidance[lang].layout))}</section>`;
 }
 
 export function componentsIndexPage(lang, d) {
@@ -176,26 +173,25 @@ export function componentPage(lang, d, c, i) {
   const next = d.components[i + 1];
   const prevLink = prev ? `<a href="${href(lang, `/components/${prev.slug}`)}">${lang === 'ar' ? '→' : '←'} ${esc(prev.title)}</a>` : '<span></span>';
   const nextLink = next ? `<a href="${href(lang, `/components/${next.slug}`)}">${esc(next.title)} ${lang === 'ar' ? '←' : '→'}</a>` : '<span></span>';
-  const english = lang === 'ar' ? ' lang="en" dir="ltr"' : '';
+  const english = '';
+  const original = {...c,title:c.titles,lead:c.leads};
   return `<p class="crumbs"><a href="${href(lang, '/components')}">${esc(t.title)}</a></p>
 ${head(lang, STR[lang].groups[c.group] || c.group, c.title, '')}
-<div class="doc${lang === 'ar' ? ' doc--en' : ''}"${english}><p class="lead" style="margin-top:var(--space-2)">${inline(c.lead)}</p></div>
-<section id="preview"><h2>${esc(t.preview)}</h2>
-<iframe class="preview" src="/previews/${esc(c.name)}.html" title="${esc(c.title)}" height="${c.height}" loading="lazy"></iframe>
-<p style="margin-top:var(--space-2)"><a href="/previews/${esc(c.name)}.html" target="_blank" rel="noopener">${esc(t.open)}</a></p></section>
+<div class="doc"${english}><p class="lead" style="margin-top:var(--space-2)">${inline(c.lead)}</p></div>
+${playground(original,lang)}
 ${c.rest ? `<section id="guidance"><h2>${esc(t.guidance)}</h2>${englishNote(lang)}${docBlock(lang, md(c.rest))}</section>` : ''}
 <nav class="pager" aria-label="${esc(t.title)}">${prevLink}${nextLink}</nav>`;
 }
 
 export function guidelinesPage(lang, d) {
   const t = STR[lang].guidelines;
-  return `${head(lang, STR[lang].navBrand, t.title, t.lead)}${englishNote(lang)}${docBlock(lang, md(d.readme.map.get('Product interface')), true)}`;
+  return `${head(lang, STR[lang].navBrand, t.title, t.lead)}${englishNote(lang)}${docBlock(lang, md(guidance[lang].guidelines), true)}`;
 }
 
 export function platformsPage(lang, d) {
-  const t = STR[lang].platforms;
-  const body = d.platformMapping.replace(/^# .*\n+/, '').replace(/^[^\n#][^\n]*\n+/, ''); // drop the H1 and the intro line: the page header says it
-  return `${head(lang, STR[lang].navBrand, t.title, t.lead)}${englishNote(lang)}${docBlock(lang, md(body), true)}`;
+  const t=STR[lang].platforms;
+  return `${head(lang,STR[lang].navFoundations,t.title,t.lead)}${installContent(lang,d.version)}
+<section><h2>${lang==='ar'?'مصدر واحد وإصدارات واضحة':'One source, explicit releases'}</h2>${docBlock(lang,md(guidance[lang].guidelines))}</section>`;
 }
 
 export function downloadsPage(lang, d) {
@@ -213,8 +209,9 @@ export function downloadsPage(lang, d) {
   const fonts = d.fonts.map((f) => `<tr><td><a href="/assets/fonts/${esc(f.file)}" download><code>${esc(f.file)}</code></a></td><td class="use">${esc(f.family)} ${esc(f.weight)}${f.style ? ` ${esc(f.style)}` : ''}</td><td class="num">${kb(f.size)}</td></tr>`).join('');
   const table = (rows) => `<div class="tcard"><div class="tscroll"><table class="tbl"><thead><tr><th>${esc(t.file)}</th><th></th><th>${esc(t.size)}</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
   return `${head(lang, STR[lang].navBrand, t.title, t.lead)}
+<section id="packages">${installContent(lang,d.version)}<p><a href="/downloads/LICENSE.txt">MIT License</a></p></section>
 <section id="code"><h2>${esc(t.codeTitle)}</h2>${table(code)}</section>
-<section id="fonts"><h2>${esc(t.fontsTitle)}</h2><p class="sec-lead">${esc(t.fontsNote)}</p>${table(fonts)}</section>
+<section id="fonts"><h2>${esc(t.fontsTitle)}</h2><p class="sec-lead">${esc(t.fontsNote)}</p>${table(fonts)}<p><a href="/assets/fonts/poppins-OFL.txt">Poppins — SIL OFL</a> · <a href="/assets/fonts/almarai-OFL.txt">Almarai — SIL OFL</a></p></section>
 <section id="brand"><h2>${esc(t.logosTitle)}</h2><p class="sec-lead">${esc(t.logosNote)}</p><a class="cv-btn cv-btn--secondary" href="${STR[lang].brandSiteUrl}">${esc(t.logosLink)}</a></section>`;
 }
 
@@ -224,3 +221,18 @@ export function notFoundPage(lang) {
 }
 
 
+
+export function templatesPage(lang) {
+ const ar=lang==='ar';
+ return `${head(lang,ar?'أمثلة متكاملة':'Complete examples',ar?'القوالب':'Templates',ar?'قوالب قابلة للتعديل بالعربية والإنجليزية للويب وFlutter. بيانات تجريبية وتفاعلات محلية.':'Editable English and Arabic templates for Web and Flutter, with sample data and local interactions.')}<ul class="cards">${templates.map(t=>`<li><a class="card" href="${href(lang,'/templates/'+t.slug)}"><b>${t.title[lang]}</b><span>${t.lead[lang]}</span></a></li>`).join('')}</ul>`;
+}
+export function templatePage(lang,template) {
+ const ar=lang==='ar';
+ return `${head(lang,ar?'القوالب':'Templates',template.title[lang],template.lead[lang])}<p>${ar?'استخدم هذا القالب كنقطة بداية. البيانات محلية ولا توجد خدمة خلفية أو مصادقة متصلة.':'Use this template as a starting point. Data stays local; no backend or authentication service is connected.'}</p><p><a href="/examples/templates/${template.slug}_${lang}.zip" download>${ar?'تنزيل ملفات قالب الويب':'Download web template files'}</a> · <a href="/examples/flutter/${template.slug}_${lang}.dart" download>${ar?'تنزيل شيفرة Flutter':'Download Flutter source'}</a></p>${playground(template,lang,{template:true})}`;
+}
+
+export function customizationPage(lang){const ar=lang==='ar';return `${head(lang,ar?'الأسس':'Foundations',ar?'تخصيص النظام':'Customize the system',ar?'غيّر اللون والخط والاستدارة والمسافات من موضع واحد.':'Change accent, fonts, corner radius and spacing from one place.')}
+<p>${ar?'هذا مثال لمظهر فاتح مخصص. احتفظ بأدوار الألوان الدلالية، وأعد فحص التباين ومؤشر التركيز والتخطيط في المظهر الداكن والأسود أيضًا. لا تتطلب المكوّنات شعار كهف أو خطوطه.':'This example customizes the light theme. Keep semantic color roles and recheck contrast, focus and layout in dark and black themes too. Components require no Cave logo or fonts.'}</p>
+<div data-platform="web"><h2>CSS</h2><p>${ar?'أضف class="product" إلى جذر التطبيق وحمّل الأنماط بعد أنماط Cave UI.':'Add class="product" to your application root and load these overrides after Cave UI styles.'}</p><pre dir="ltr"><code>${esc(customCss)}</code></pre></div>
+<div data-platform="flutter" hidden><h2>Flutter</h2><pre dir="ltr"><code>${esc(customDart)}</code></pre></div>
+<h2>${ar?'حدود التخصيص':'Customization boundaries'}</h2><p>${ar?'تغيّر الرموز المكوّنات التي تستخدمها. يضبط spacingScale حشوات عناصر المظهر؛ استخدم مسافات تطبيقك للمحتوى المخصص. تستمر اللغات والاتجاهات في العمل بشكل مستقل.':'Tokens affect components that consume them. spacingScale adjusts themed control padding; use your application spacing for custom content. Locale and direction remain independent.'}</p>`;}

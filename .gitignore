@@ -7,3 +7,12 @@ dist
 # Third-party fonts that are not open licensed (see README)
 source/fonts/Hero*.otf
 source/fonts/BlueOcean.ttf
+
+# Package build/cache outputs
+.artifacts/
+.cache/
+packages/*/dist/
+**/.dart_tool/
+**/build/
+**/pubspec.lock
+**/.flutter-plugins*

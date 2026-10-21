@@ -8,14 +8,15 @@ const root = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'dist
 const port = Number(process.argv[2] || process.env.PORT || 4173);
 const types = {
   '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8',
-  '.json': 'application/json', '.svg': 'image/svg+xml', '.ttf': 'font/ttf', '.otf': 'font/otf', '.xml': 'application/xml',
+  '.mjs': 'text/javascript; charset=utf-8', '.wasm': 'application/wasm',
+  '.json': 'application/json', '.svg': 'image/svg+xml', '.ttf': 'font/ttf', '.otf': 'font/otf', '.woff2': 'font/woff2', '.xml': 'application/xml',
   '.txt': 'text/plain; charset=utf-8', '.dart': 'text/plain; charset=utf-8', '.png': 'image/png', '.webp': 'image/webp',
 };
 
 async function find(urlPath) {
   const clean = decodeURIComponent(urlPath.split('?')[0]);
   const base = path.normalize(path.join(root, clean));
-  if (!base.startsWith(root)) return null;
+  if (base !== root && !base.startsWith(root + path.sep)) return null;
   for (const candidate of [base, base + '.html', path.join(base, 'index.html')]) {
     try {
       if ((await stat(candidate)).isFile()) return candidate;
@@ -24,7 +25,7 @@ async function find(urlPath) {
   return null;
 }
 
-http.createServer(async (req, res) => {
+const server = http.createServer(async (req, res) => {
   const file = await find(req.url);
   const target = file || path.join(root, '404.html');
   try {
@@ -35,4 +36,5 @@ http.createServer(async (req, res) => {
     res.writeHead(404);
     res.end('Not found');
   }
-}).listen(port, () => console.log(`http://localhost:${port}`));
+});
+server.listen(port, '127.0.0.1', () => console.log(`http://127.0.0.1:${server.address().port}`));
