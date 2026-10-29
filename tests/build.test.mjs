@@ -27,7 +27,7 @@ const walk = async (dir) => {
 test('contrast maths matches the figures the README states', () => {
   const r = makeResolver(tokens);
   assert.equal(r.ratio('light', 'on-accent-strong', 'accent-strong').toFixed(1), '5.6'); // white on lagoon
-  assert.equal(r.ratio('dark', 'on-accent-strong', 'accent-strong').toFixed(2), '4.55'); // navy on teal
+  assert.equal(r.ratio('dark', 'on-accent-strong', 'accent-strong').toFixed(1), '9.6'); // deep ink on aqua (Forms Dark)
   assert.equal(r.ratio('black', 'on-accent-strong', 'accent-strong').toFixed(1), '5.1'); // charcoal on teal
   assert.equal(contrast(parseColor('#000'), parseColor('#fff')).toFixed(1), '21.0');
 });
@@ -52,6 +52,14 @@ test('palette guidance figures are true: raw teal is not text, input borders pas
   for (const theme of THEMES) {
     assert.ok(contrast(r.opaque(theme, 'border-strong'), r.opaque(theme, 'surface')) >= 3, `${theme}: border-strong on surface`);
   }
+});
+
+test('Dark theme matches the Cave Forms landing page, and Black is unchanged', () => {
+  const r = makeResolver(tokens);
+  const forms = { surface: '#10252d', 'surface-raised': '#19333c', ink: '#e3f4f5', 'ink-muted': '#b1cbd1', border: '#38545d', accent: '#51ded4', 'accent-text': '#51ded4', 'on-accent': '#10252d' };
+  for (const [name, hex] of Object.entries(forms)) assert.equal(r.hex('dark', name), hex, `dark ${name}`);
+  assert.equal(r.hex('black', 'surface'), '#1d1d1b');
+  assert.equal(r.hex('black', 'accent-text'), '#3fc7bd');
 });
 
 test('tokens.css defines every semantic token for all three themes and leaves no unresolved reference', () => {

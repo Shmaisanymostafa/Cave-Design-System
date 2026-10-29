@@ -32,7 +32,7 @@ test('packages contain no runtime dependencies, proprietary fonts or product-spe
 });
 test('generated themes preserve semantic colour values and DTCG alpha precision',async()=>{
  const tokens=JSON.parse(await readFile(new URL('../packages/tokens/dist/tokens.json',import.meta.url)));assert.equal(tokens.themes.light['accent-strong'],'#047283');assert.equal(tokens.themes.black.surface,'#1d1d1b');
- const dtcg=JSON.parse(await readFile(new URL('../packages/tokens/dist/dtcg/dark.json',import.meta.url)));assert.equal(dtcg.color['surface-raised'].$value.alpha,.06);assert.equal(dtcg.dimension['space-3'].$value.value,16);
+ const dtcg=JSON.parse(await readFile(new URL('../packages/tokens/dist/dtcg/dark.json',import.meta.url)));assert.equal(dtcg.color['surface-hover'].$value.alpha,.08);assert.equal(dtcg.dimension['space-3'].$value.value,16);
  const dart=await readFile(new URL('../packages/flutter/lib/src/tokens.dart',import.meta.url),'utf8');assert.match(dart,/surfaceRaised = Color\(0x0FFFFFFF\)/);
 });
 test('package generation is deterministic',async()=>{
