@@ -1,6 +1,6 @@
 # README artwork
 
-`components.png` is a documentation composition of the canonical Web TextField, Checkbox, Button and StatusBadge examples in `source/catalog.mjs`, rendered with `source/components/core.css` and values from `source/tokens.json` at base commit `86bba3aec562860b904a14a7a19e959fddd814d2`.
+`components.png` is a documentation composition of the canonical Web TextField, Checkbox, Button and StatusBadge examples in `source/catalog.mjs`, rendered in Chromium from the built Web package (`packages/core/dist/styles.css` and `tokens.css`) with the real component markup. An earlier version of this image showed desaturated colours that did not match the tokens (Light primary button `#4a6d80` instead of lagoon `#047283`); it was re-rendered and the button colours checked against `source/tokens.json`.
 
 The English Light and Arabic Dark specimens use the committed Poppins and Almarai fonts, which retain their included SIL OFL notices in `source/fonts/`. This is a Web component specimen, not a product screenshot or a Flutter rendering. Package code and generated tokens retain the existing MIT terms in `packages/LICENSE`.
 

@@ -41,6 +41,19 @@ test('every text pair in every theme passes its threshold', () => {
   }
 });
 
+test('palette guidance figures are true: raw teal is not text, input borders pass 3:1', () => {
+  const r = makeResolver(tokens);
+  const white = r.colour('light', 'white'), paper = r.colour('light', 'paper');
+  const teal = r.colour('light', 'teal');
+  assert.equal(contrast(teal, paper).toFixed(1), '3.1');
+  assert.equal(contrast(teal, white).toFixed(1), '3.3');
+  assert.ok(contrast(r.colour('light', 'slate'), paper) < 3, 'slate on paper is decorative only');
+  assert.ok(contrast(r.colour('light', 'mint'), white) < 3, 'mint on white is decorative only');
+  for (const theme of THEMES) {
+    assert.ok(contrast(r.opaque(theme, 'border-strong'), r.opaque(theme, 'surface')) >= 3, `${theme}: border-strong on surface`);
+  }
+});
+
 test('tokens.css defines every semantic token for all three themes and leaves no unresolved reference', () => {
   const css = buildTokensCss(tokens);
   assert.ok(!css.includes('{') || !/var\(--[^)]*\{/.test(css));

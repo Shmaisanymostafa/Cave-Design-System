@@ -9,8 +9,9 @@ export function langPrefix(lang) {
 }
 
 export function href(lang, route) {
+  // Hosting uses clean URLs without a trailing slash, so /ar/ would be a redirect: the Arabic home is /ar.
   const p = langPrefix(lang) + route;
-  return p === '' ? '/' : p;
+  return p === '' ? '/' : p.replace(/\/$/, '') || '/';
 }
 
 const THEME_BOOT = `(function(){var c='system';try{c=localStorage.getItem('cave-design-theme')||'system'}catch(e){}var t=['light','dark','black'].includes(c)?c:(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);var p=new URLSearchParams(location.search).get('platform');if(!['web','flutter'].includes(p)){try{p=localStorage.getItem('cave-design-platform')}catch(e){}}document.documentElement.setAttribute('data-platform',p==='flutter'?'flutter':'web')})()`;

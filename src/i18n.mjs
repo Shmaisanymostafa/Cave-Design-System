@@ -183,7 +183,7 @@ export const STR = {
     navComponents: 'المكوّنات',
     navBrand: 'الهوية',
     navBrandSite: 'موقع الهوية',
-    brandSiteUrl: 'https://brand.cave.technology/ar/',
+    brandSiteUrl: 'https://brand.cave.technology/ar',
     navGuidelines: 'إرشادات المنتجات',
     navPlatforms: 'المنصات',
     navDownloads: 'التنزيلات',

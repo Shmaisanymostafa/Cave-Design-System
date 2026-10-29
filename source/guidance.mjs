@@ -6,6 +6,8 @@ Light uses a paper surface, Dark uses navy, and Black uses charcoal. Black is a 
 
 Primary button text has 5.6:1 contrast in Light, 4.55:1 in Dark and 5.1:1 in Black. Status messages include words; colour alone cannot explain a result.
 
+On the raw palette, plain teal is 3.1:1 on paper and 3.3:1 on white, so use it for fills, icons and large graphics and use \`accent-text\` for text. Slate is about 2:1 and mint 1.7:1 on light surfaces, so keep them decorative. \`border\` is a divider; the edge of an input uses \`border-strong\`, which passes 3:1 in every theme.
+
 Change tokens in \`source/tokens.json\` and regenerate all platforms. A custom brand theme can override CSS variables on its root or supply a \`CaveColors\` extension in Flutter. Check contrast again after customization.`,
   typography: `Poppins is the optional English font and Almarai is the optional Arabic font. Packages include system-font fallbacks and make no font-network requests. Download and bundle the open fonts when you want the same typography as this documentation.
 
@@ -45,6 +47,8 @@ Code in the packages is MIT licensed. Open fonts retain their own SIL Open Font 
 يستخدم المظهر الفاتح خلفية ورقية والداكن خلفية كحلية والأسود خلفية فحمية قريبة من الأسود. يتبع خيار النظام إعداد الجهاز ويختار الفاتح أو الداكن.
 
 تباين نص الزر الأساسي هو 5.6:1 في الفاتح و4.55:1 في الداكن و5.1:1 في الأسود. تتضمن رسائل الحالة كلمات واضحة؛ اللون وحده لا يشرح النتيجة.
+
+في اللوحة الأساسية، تباين الفيروزي العادي 3.1:1 على الورقي و3.3:1 على الأبيض، لذا استخدمه للتعبئة والأيقونات والرسوم الكبيرة واستخدم \`accent-text\` للنص. تباين الرمادي المزرق نحو 2:1 والنعناعي 1.7:1 على الأسطح الفاتحة، فأبقِهما للزينة فقط. \`border\` للفواصل؛ أما حدّ حقل الإدخال فيستخدم \`border-strong\` الذي يحقق 3:1 في كل المظاهر.
 
 عدّل الرموز في \`source/tokens.json\` ثم أعد توليد ملفات جميع المنصات. يمكن تخصيص متغيرات CSS على جذر التطبيق أو تمرير امتداد \`CaveColors\` في Flutter. افحص التباين بعد التخصيص.`,
   typography: `Poppins هو الخط الإنجليزي الاختياري وAlmarai هو الخط العربي الاختياري. تتضمن الحزم بدائل من خطوط النظام ولا تطلب الخطوط من الشبكة. نزّل الخطوط المفتوحة وضمّنها للحصول على خطوط هذا التوثيق.
