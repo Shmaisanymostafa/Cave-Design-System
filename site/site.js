@@ -19,9 +19,15 @@
       const open=document.querySelector('.preview-open');if(open)open.href=url;
     }
   }
+  const bar=document.querySelector('meta[name="theme-color"]');const barBase=bar?.content;
+  function syncBarColour() {
+    if(!bar)return;
+    const dark=root.dataset.theme==='dark'||root.dataset.theme==='black';
+    bar.content=dark?getComputedStyle(root).getPropertyValue('--surface').trim()||barBase:barBase;
+  }
   function applyTheme(notify=false) {
     root.dataset.theme=theme==='system'?(media.matches?'dark':'light'):theme;
-    themeSelect.value=theme;updatePreviews();if(notify)document.dispatchEvent(new Event('cave:docs-theme'));
+    themeSelect.value=theme;syncBarColour();updatePreviews();if(notify)document.dispatchEvent(new Event('cave:docs-theme'));
   }
   themeSelect?.addEventListener('change',()=>{theme=validTheme(themeSelect.value);save('cave-design-theme',theme);applyTheme(true);});
   media.addEventListener('change',()=>{if(theme==='system')applyTheme(true);});

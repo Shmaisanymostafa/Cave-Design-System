@@ -138,3 +138,11 @@ test('every font file a stylesheet points at was written to dist', async () => {
     for (const m of text.matchAll(/url\("([^"]+)"\)/g)) await stat(path.join(DIST, m[1]));
   }
 });
+
+test('links styled as buttons are not underlined', async () => {
+  const root = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'source', 'components');
+  for (const [file, rule] of [['bundle.css', /\.cv-btn\{[^}]*\}/], ['core.css', /\.cave-btn\{[^}]*\}/]]) {
+    const css = await readFile(path.join(root, file), 'utf8');
+    assert.match(css.match(rule)[0], /text-decoration:none/, `${file} button rule must remove the link underline`);
+  }
+});
